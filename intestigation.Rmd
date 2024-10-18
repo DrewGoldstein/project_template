@@ -37,6 +37,11 @@ attribute_lines <- gsub(" .*", "", attribute_lines)
 
 colnames(data) <- c(attribute_lines)
 view(data)
+
+frequency <- data %>%
+  group_by()
+
+
 ```
 
 
