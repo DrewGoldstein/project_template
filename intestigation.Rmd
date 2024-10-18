@@ -26,8 +26,8 @@ library(tidyverse)
 ```{r load-data}
 # load your data 
 
-data <- read_csv("data/crime/communities.data")
-#colnames(df) <- c()
+data <- read.csv("data/crime/communities.data", header = FALSE)
+
 names_lines <- read_lines("data/crime/communities.names")
 
 
@@ -36,6 +36,7 @@ attribute_lines <- gsub("@attribute ", "", attribute_lines)
 attribute_lines <- gsub(" .*", "", attribute_lines)
 
 colnames(data) <- c(attribute_lines)
+view(data)
 ```
 
 
