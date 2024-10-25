@@ -260,6 +260,16 @@ print(plot)
 
 # policoperbudget
 
+plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = PolicOperBudg)) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,1.0) +
+  labs(title = "policoperbudg against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y="policoperbudg")
+print(plot)
+
 # police budget per pop
 
 # pct born same state
