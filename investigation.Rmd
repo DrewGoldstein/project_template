@@ -48,6 +48,37 @@ cleaning
 - column name
 - importing
 - remove 0 and 1 from dataset and replace with... 
+- make categorical varialbes; high, med, low
+- mutate number of state to name
+- split by state
+- remove 0 and 1 
+- transfer from 
+
+Variables:
+
+convert to categorical
+- state
+
+
+- perCapInc
+- medFamInc
+
+convert to categorical 
+- NumUnderPov
+- PctPopUnderPov
+
+convert to caterical
+- PctUnemployed
+- PctEmploy
+
+- pctWage
+
+- RentLowQ
+- RentMedian
+- RentHighQ
+- MedRent
+
+- ViolentCrimesPerPop
 
 back up data source
 
@@ -136,7 +167,7 @@ frequency_community <- data %>%
   summarise(count = n())
 
 
-# view column names
+# view column names, add description
 
 column_names <- colnames(data)
 
