@@ -15,8 +15,8 @@ group project.
   - Describe - 
   - Explore - analyse for relationships between varialbles, crime and community variables. 
   - Infer - Analyse data from a group, race, age, income, parents
-  - Predict - Predictions on an individual or a population. Must involve the goal variable, Violent crimes per population. A look at the determinating factors of Violen Crimes Per Pop
-  - Casaul - 
+  - Predict - Predictions on an individual or a population. Must involve the goal variable, Violent crimes per population. A look at the determining factors of Violent Crimes Per Pop
+  - Casual - 
   - Mechanistic - how does one variable impact another
   
   - confounding variables?
@@ -181,7 +181,95 @@ view(age)
 ```{r main-program} 
 # Main Program
 
+plot_y <- function (data, variable) {
+  plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = !!variable)) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,1.0) +
+  labs(title = "Population against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y= enquo(variable))
+  print(plot)
+
+}
 
 
+
+# Visualise population against violentcrimes per pop
+
+plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = population)) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,1.0) +
+  labs(title = "Population against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y="Population")
+print(plot)
+
+# visualise perCapInc against violentcrimesperpop
+
+
+plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = perCapInc)) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,1.0) +
+  labs(title = "PerCapInc against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y="PerCapInc")
+print(plot)
+
+# percentage unemployed
+
+plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = PctUnemployed)) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,1.0) +
+  labs(title = "PctUnemployed against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y="PctUnemployed")
+print(plot)
+
+# percentage employed
+
+
+plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = PctEmploy)) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,1.0) +
+  labs(title = "Pctemploy against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y="PctEmploy")
+print(plot)
+
+
+# policeperpop
+
+# policoperbudget
+
+# police budget per pop
+
+# pct born same state
+
+# numstreet
+
+# num in shelters
+
+# (numstreet + num in shelters) /2 ( not very useful)
+
+
+plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = (NumStreet + NumInShelters))) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,0.5) +
+  labs(title = "PctUnemployed against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y="PctUnemployed")
+print(plot)
 
 ```
