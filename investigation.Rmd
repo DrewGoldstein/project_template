@@ -8,6 +8,8 @@ output: html_document
 **Note:** You can use this file as you 'working document' where you can try out various investigation ideas and keep notes about your findings. How you use and structure this file is up to you. It is recommended that you keep notes about what you are investigating and what you find as this will make the process of creating your presentation and report easier. Please note that you _do not_ need to submit this file as part of your 
 group project.
 
+5 Steps 
+
 Data Type, attributes, kinds of questions i can answer.
 
 Objective Statement/ Problem Statement
@@ -109,6 +111,7 @@ column_names <- colnames(data)
 view(column_names)
 
 name <- list()
+name_block <- list()
 
 for (x in length(column_names)) {
   name_block <- c(name, name_block)
@@ -120,27 +123,25 @@ view(name_block)
 
 race <- data %>%
   select("state", "communityname",  "population","racepctblack","racePctWhite","racePctAsian","racePctHisp") 
-  view(race)
+view(race)
 
 
-race(data)
 #Age
 
 
   
 age <- data %>%
   select("state", "communityname", "population", "agePct12t21", "agePct12t29", "agePct16t24", "agePct65up")
-  view(age)
+
+view(age)
 
 
-age(data)
 
 # employment
-employment_freq <- data %>%
-  select()
 
 
-employment_freq(data)
+
+
 #education
   
 #per capita
@@ -150,7 +151,7 @@ employment_freq(data)
 #divorce etc
 ```
 
-```{r load-data} 
+```{r main-program} 
 # Main Program
 
 
