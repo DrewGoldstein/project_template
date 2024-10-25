@@ -13,7 +13,7 @@ group project.
 - stating and refining question
 
   - Describe - 
-  - Explore - analyse for relationships between varialbles, crime and community variables. 
+  - Explore - analyse for relationships between variables, crime and community variables. 
   - Infer - Analyse data from a group, race, age, income, parents
   - Predict - Predictions on an individual or a population. Must involve the goal variable, Violent crimes per population. A look at the determining factors of Violent Crimes Per Pop
   - Casual - 
