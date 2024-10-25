@@ -367,9 +367,41 @@ creating your presentation and report easier. Please note that you
 <em>do not</em> need to submit this file as part of your group
 project.</p>
 <p>5 Steps</p>
+<ul>
+<li><p>stating and refining question</p>
+<ul>
+<li><p>Describe -</p></li>
+<li><p>Explore - analyse for relationships between varialbles, crime and
+community variables.</p></li>
+<li><p>Infer - Analyse data from a group, race, age, income,
+parents</p></li>
+<li><p>Predict - Predictions on an individual or a population. Must
+involve the goal variable, Violent crimes per population. A look at the
+determinating factors of Violen Crimes Per Pop</p></li>
+<li><p>Casaul -</p></li>
+<li><p>Mechanistic - how does one variable impact another</p></li>
+<li><p>confounding variables?</p></li>
+</ul></li>
+<li><p>exploratory data analysis</p>
+<ul>
+<li>graph against violent crimes per population</li>
+<li>frequency distribution</li>
+</ul>
+<p>checklist:</p>
+<ul>
+<li>validate</li>
+<li>top, bottom, middle rows</li>
+<li>plot</li>
+<li></li>
+</ul></li>
+<li><p>model building</p></li>
+<li><p>interpreting results</p></li>
+<li><p>communicating results</p></li>
+</ul>
 <p>Data Type, attributes, kinds of questions i can answer.</p>
 <p>Objective Statement/ Problem Statement</p>
-<p>cleaning - NA - column name - importing</p>
+<p>cleaning - NA - column name - importing - remove 0 and 1 from dataset
+and replace with…</p>
 <p>back up data source</p>
 <p>Exploratory Data Analysis:</p>
 <p>-What type of variation occurs within variables?</p>
@@ -418,6 +450,8 @@ attribute_lines &lt;- gsub(&quot; .*&quot;, &quot;&quot;, attribute_lines)
   
 colnames(data) &lt;- c(attribute_lines)
 
+view(data)
+
 frequency_state &lt;- data %&gt;%
   group_by(state) %&gt;%
   summarise(count = n())
@@ -433,14 +467,9 @@ column_names &lt;- colnames(data)
 
 view(column_names)
 
-name &lt;- list()
-name_block &lt;- list()
+# Sort column names
 
-for (x in length(column_names)) {
-  name_block &lt;- c(name, name_block)
-}
 
-view(name_block)
 
 #Race
 

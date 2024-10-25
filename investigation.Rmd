@@ -10,6 +10,35 @@ group project.
 
 5 Steps 
 
+- stating and refining question
+
+  - Describe - 
+  - Explore - analyse for relationships between varialbles, crime and community variables. 
+  - Infer - Analyse data from a group, race, age, income, parents
+  - Predict - Predictions on an individual or a population. Must involve the goal variable, Violent crimes per population. A look at the determinating factors of Violen Crimes Per Pop
+  - Casaul - 
+  - Mechanistic - how does one variable impact another
+  
+  - confounding variables?
+  
+- exploratory data analysis
+
+  - graph against violent crimes per population 
+  - frequency distribution
+  
+  checklist:
+  
+  - validate
+  - top,  bottom, middle rows
+  - plot
+  - 
+
+- model building
+
+- interpreting results
+
+- communicating results
+
 Data Type, attributes, kinds of questions i can answer.
 
 Objective Statement/ Problem Statement
@@ -18,6 +47,7 @@ cleaning
 - NA
 - column name
 - importing
+- remove 0 and 1 from dataset and replace with... 
 
 back up data source
 
@@ -81,7 +111,7 @@ library(tidyverse)
 ```
 
 
-```{r load-data}
+```{r load-data, include = TRUE}
 # load your data 
 
 data <- read.csv("data/crime/communities.data", header = FALSE, na.string = "?")
@@ -94,6 +124,8 @@ attribute_lines <- gsub("@attribute ", "", attribute_lines)
 attribute_lines <- gsub(" .*", "", attribute_lines)
   
 colnames(data) <- c(attribute_lines)
+
+view(data)
 
 frequency_state <- data %>%
   group_by(state) %>%
@@ -110,14 +142,9 @@ column_names <- colnames(data)
 
 view(column_names)
 
-name <- list()
-name_block <- list()
+# Sort column names
 
-for (x in length(column_names)) {
-  name_block <- c(name, name_block)
-}
 
-view(name_block)
 
 #Race
 
