@@ -183,17 +183,16 @@ view(age)
 
 plot_y <- function (data, variable) {
   plot <- ggplot(data = data,
-    mapping = aes(x=ViolentCrimesPerPop, y = !!variable)) +
+    mapping = aes(x=ViolentCrimesPerPop, y = variable)) +
   geom_point() + 
   xlim(0.0,1.0) + 
   ylim(0.0,1.0) +
   labs(title = "Population against ViolentCrimesPerPop", 
        x = "ViolentCrimesPerPop",
-       y= enquo(variable))
+       y= variable)
   print(plot)
 
 }
-
 
 
 # Visualise population against violentcrimes per pop
@@ -249,6 +248,16 @@ print(plot)
 
 # policeperpop
 
+plot <- ggplot(data = data,
+    mapping = aes(x=ViolentCrimesPerPop, y = PolicPerPop)) +
+  geom_point() + 
+  xlim(0.0,1.0) + 
+  ylim(0.0,1.0) +
+  labs(title = "policeperpop against ViolentCrimesPerPop", 
+       x = "ViolentCrimesPerPop",
+       y="policeperpop")
+print(plot)
+
 # policoperbudget
 
 # police budget per pop
@@ -271,5 +280,7 @@ plot <- ggplot(data = data,
        x = "ViolentCrimesPerPop",
        y="PctUnemployed")
 print(plot)
+
+# plot distribution of each variable
 
 ```
