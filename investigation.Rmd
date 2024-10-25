@@ -145,11 +145,12 @@ library(tidyverse)
 ```{r load-data, include = TRUE}
 # load your data 
 
-data <- read.csv("data/crime/communities.data", header = FALSE, na.string = "?")
+data <- read.csv("data/crime/communities.data", header = FALSE, na.string = c("?", 0.00, 1.00))
   
 names_lines <- read_lines("data/crime/communities.names")
   
-  
+# add column names
+
 attribute_lines <- grep("^@attribute", names_lines, value = TRUE)
 attribute_lines <- gsub("@attribute ", "", attribute_lines)
 attribute_lines <- gsub(" .*", "", attribute_lines)
@@ -157,6 +158,21 @@ attribute_lines <- gsub(" .*", "", attribute_lines)
 colnames(data) <- c(attribute_lines)
 
 view(data)
+
+# replace 0.00 and 1.00 with NA
+ 
+
+
+# make categorical varialbes; high, med, low
+
+
+# mutate number of state to name
+
+# figure out which number is which
+
+
+# create state tables
+
 
 frequency_state <- data %>%
   group_by(state) %>%
@@ -229,10 +245,8 @@ plot_y <- function (data, variable) {
 # Visualise population against violentcrimes per pop
 
 plot <- ggplot(data = data,
-    mapping = aes(x=ViolentCrimesPerPop, y = population)) +
-  geom_point() + 
-  xlim(0.0,1.0) + 
-  ylim(0.0,1.0) +
+    mapping = aes(x=ViolentCrimesPerPop)) +
+  geom_histogram() + 
   labs(title = "Population against ViolentCrimesPerPop", 
        x = "ViolentCrimesPerPop",
        y="Population")
