@@ -35,6 +35,8 @@ group project.
 
 - model building
 
+- test on 1-9 fold and find results on 10 fold
+
 - interpreting results
 
 - communicating results
@@ -160,7 +162,6 @@ colnames(data) <- c(attribute_lines)
 view(data)
 
 # replace 0.00 and 1.00 with NA
- 
 
 
 # make categorical varialbes; high, med, low
@@ -230,7 +231,7 @@ view(age)
 
 plot_y <- function (data, variable) {
   plot <- ggplot(data = data,
-    mapping = aes(x=ViolentCrimesPerPop, y = variable)) +
+    mapping = aes_string(x="ViolentCrimesPerPop", y = variable)) +
   geom_point() + 
   xlim(0.0,1.0) + 
   ylim(0.0,1.0) +
@@ -241,6 +242,7 @@ plot_y <- function (data, variable) {
 
 }
 
+plot_y(data, "perCapInc")
 
 # Visualise population against violentcrimes per pop
 
