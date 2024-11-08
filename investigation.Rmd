@@ -189,8 +189,21 @@ data <- data %>%
 #divorce etc
 ```
 
-```{r main-program} 
-# Main Program
+```{r main-program}
+
+# Poverty vs crime
+
+
+
+# Family vs crime
+
+
+
+# Geography vs crime
+
+
+
+# Plots made by Drew
 
 plot_y <- function (data, variable) {
   plot <- ggplot(data = data,
@@ -281,17 +294,6 @@ plot <- ggplot(data = data,
        y="policoperbudg")
 print(plot)
 
-# police budget per pop
-
-# pct born same state
-
-# numstreet
-
-# num in shelters
-
-# (numstreet + num in shelters) /2 ( not very useful)
-
-
 plot <- ggplot(data = data,
     mapping = aes(x=ViolentCrimesPerPop, y = (NumStreet + NumInShelters))) +
   geom_point() + 
@@ -301,7 +303,5 @@ plot <- ggplot(data = data,
        x = "ViolentCrimesPerPop",
        y="PctUnemployed")
 print(plot)
-
-# plot distribution of each variable
 
 ```
