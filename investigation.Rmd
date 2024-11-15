@@ -197,10 +197,19 @@ data <- data %>%
 
 # Family vs crime
 
+family_statistics <- data %>%
+  select(medFamInc, PctFam2Par, PctWorkMomYoungKids, ViolentCrimesPerPop) %>%
+  drop_na()
 
+family_statistics <- family_statistics %>%
+  rename(
+    "Median Family Income" = medFamInc,
+    "Percentage of families with two parents" = PctFam2Par,
+    "Percentage of working moms with young kids" = PctWorkMomYoungKids
+  )
 
 # Geography vs crime
-
+ 
 
 
 # Plots made by Drew
