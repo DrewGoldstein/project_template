@@ -148,6 +148,7 @@ family_statistics <- data %>%
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
+# Calculating simple summary statistics
 family_statistics_summary <- family_statistics %>%
   summarise(across(where(is.numeric),
       list(
@@ -158,29 +159,33 @@ family_statistics_summary <- family_statistics %>%
         max = ~max(.x, na.rm = TRUE)
       ),
       .names = "{.col}_{.fn}"))
-print(family_statistics_summary) # Calculating simple summary statistics
+family_statistics_summary
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
+# Combining Levels (Low, Medium, High) and Category (Income_Levels, Two_Parent_Families, Working_Moms)
 family_statistics_long <- family_statistics %>%
   pivot_longer(
     cols = c(Median_Family_Income_Levels, Number_of_Two_Parent_Families, Number_of_Working_Moms),
     names_to = "Category",
     values_to = "Level"
-  ) # Combining Levels (Low, Medium, High) and Category (Income_Levels, Two_Parent_Families, Working_Moms)
+  ) 
 
+# Defining Level
 family_statistics_long <- family_statistics_long %>%
   mutate(
     Level = factor(Level, levels = c("Low", "Medium", "High"))
-  ) # Defining Level
+  )
 
+# Deleting underscore from variable names
 family_statistics_long <- family_statistics_long %>%
   mutate(
     Category = str_replace_all(Category, "_", " ")
-    ) # Deleting underscore from variable names
+    )
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
+# Box plot showing the relationship between familial status and violent crimes
 ggplot(family_statistics_long, 
        aes(x = Level, 
            y = violentPerPop, 
@@ -196,11 +201,12 @@ ggplot(family_statistics_long,
   theme_minimal() +
   theme_bw() +
   theme(
-    plot.subtitle = element_text(size = 10) 
-  )# Box plot showing the relationship between familial status and violent crimes
+    plot.subtitle = element_text(size = 10),
+    strip.text = element_text(size = 7)
+  )
 ```
-
 ```{r, echo=TRUE, warning=FALSE}
+ # Histogram showing the relationship between family status and violent crimes
 ggplot(data = family_statistics_long, 
        mapping = aes(
          x = violentPerPop,
@@ -220,7 +226,66 @@ ggplot(data = family_statistics_long,
              ncol = 3) +
   theme(
     plot.subtitle = element_text(size = 10) 
-  ) # Histogram showing the relationship between family status and violent crimes
+  )
+
+```
+
+```{r, echo=TRUE, warning=FALSE}
+library(patchwork)
+
+plot1 <- ggplot(family_statistics_long, aes(
+  x = Families_with_two_parents,
+  y = violentPerPop)) +
+  geom_point(alpha = 0.5, color = "forestgreen") +
+  geom_smooth(method = "lm", color = "black", se = FALSE) +
+  labs(
+    title = "Crimes per Population and Number of Families with Two Parents",
+    x = "Number of Families with Two Parents",
+    y = "Violent Crimes per Population"
+  ) +
+  theme_bw() +
+   theme(
+    plot.title = element_text(size = 8),
+    axis.title.x = element_text(size = 7),
+    axis.title.y = element_text(size = 7)
+  )
+
+plot2 <- ggplot(family_statistics_long, aes(
+  x = Median_Family_Income,
+  y = violentPerPop)) +
+  geom_point(alpha = 0.5, color = "red") +
+  geom_smooth(method = "lm", color = "black", se = FALSE) +
+  labs(
+    title = "Crimes per Population and Median Family Income",
+    x = "Median Family Income",
+    y = "Violent Crimes per Population"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 8),
+    axis.title.x = element_text(size = 7),
+    axis.title.y = element_text(size = 7)
+  )
+
+plot3 <- ggplot(family_statistics_long, aes(
+  x = Working_moms, 
+  y = violentPerPop)) +
+  geom_point(alpha = 0.5, color = "yellow") +
+  geom_smooth(method = "lm", color = "black", se = FALSE) +
+  labs(
+    title = "Crimes per Population and Number of Families With Working Moms",
+    x = "Number of Families With Working Moms",
+    y = "Violent Crimes per Population"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 8),
+    axis.title.x = element_text(size = 7),
+    axis.title.y = element_text(size = 7)
+  )
+
+combined_plot <- plot1 + plot2 + plot3 + plot_layout(ncol = 2)
+combined_plot
 ```
 
 ``` {r} 
