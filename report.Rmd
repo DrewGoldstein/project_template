@@ -12,26 +12,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load-lib, include = FALSE}
 library(tidyverse)
-# Add any other libraries here
-
-
-
+library(tidyr)
+# Add any other libraries here}
 ```
 
 
 ```{r load-data, include=FALSE}
-# load your data here and any pre-processing/cleaning 
-#  that you need for your report.
+#Loading data
 
+data <- read.csv("data/crime/communitiesUnnormalized.txt", header = FALSE, na.string = "?")
+  
+names_lines <- read_lines("data/crime/names.names")
+  
+  
+attribute_lines <- grep("^@attribute", names_lines, value = TRUE)
+attribute_lines <- gsub("@attribute ", "", attribute_lines)
+attribute_lines <- gsub(" .*", "", attribute_lines)
 
+colnames(data) <- c(attribute_lines)
 
-
+column_names <- colnames(data)
 ```
 
 
 ## Research Question
 
-Describe your research question here. Include why this question might be of interest. 
+Which factors influence more on the crime level of a city in the United States? (Clearly we should refine this statement)
 
 
 
@@ -51,25 +57,82 @@ If you got your data off the web, make sure to state the retrieval date.
 
 ## Findings
 
-The write-up of your project and findings go here. 
+##Economics##
 
-Think of this as the text of your presentation with some extra detail to cover what there was not time to discuss in the presentation. This might include any assumptions you made when doing your analysis, any limitations of the work you have done or any ideas you have for future work. Feel free to split this section into subsections to make it easier to read. 
+In order to find a suitable economic variable to model the violence in a given city, we'll start by taking a look at the income per capita.
 
-The length should be roughly 1,500 words. 
-If you want to use a word count addin, you can install this by copying and pasting the following into RStudio:
+Let's equally split the variable perCapInc into four categories representing the level of wealth of each city, and let's visualize the relation of these categories with the ViolentPerPop:
 
-`devtools::install_github("benmarwick/wordcountaddin", type = "source", dependencies = TRUE)`
+```{r}
+data <- data %>%
+  mutate(
+    wealth_category = cut(
+      perCapInc,
+      breaks = quantile(perCapInc, probs = seq(0, 1, 0.25), na.rm = TRUE),
+      include.lowest = TRUE,
+      labels = c("Low wealth", "Middle-Low wealth", "Middle-High Wealth", "High Wealth")
+    )
+  )
 
-You will then need to restart RStudio. Once you have done that, select the text you want to count the words of, go to Addins, and select the `Word count` addin.
-This addin counts words using two different algorithms, but the results should be similar and as long as you're in the ballpark of 1,500 words, you're good! 
-The addin will ignore code chunks and only count the words in prose. If you don't want to use the addin you can always copy and paste the text into Microsoft Word to do a Word Count!
+ggplot(data, aes(x = wealth_category, y = violentPerPop, fill = wealth_category)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Violent Crimes per each wealth category",
+    x = "Wealth category",
+    y = "Violent crimes per 100K"
+  ) +
+  theme_minimal()
+```
 
-You can also load your data here and present any analysis results / plots.
-Make sure to hide your code with  `echo = FALSE` unless the point you are trying to make is about the code itself, in which case you should show your code.
+We spot a clear relation between the economic level of a city and the level of violent, that is, as the level of wealth increases, the level of violent decreases.
 
+However, recall that the income per capita is mathematically defined as follows:
+$$
+perCapInc = \frac{\text{Total Income}}{Population}
+$$
+That means, if the total income is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population. This encourages us to include some other variable that better measures this distribution.
 
+Let's take a look at the pctPoverty variable (percentage of people under poverty). It is well-known that as the population under poverty increases in a country, then does the level of crime as well.
 
+Nevertheless, something interesting happens when we observe the relation between the poverty and crime for each of the wealth categories:
 
+```{r, message = FALSE}
+ggplot(data, aes(x = pctPoverty, y = violentPerPop)) +
+  geom_point(alpha = 0.6, color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  facet_wrap(~ wealth_category, scales = "free") +
+  labs(
+    title = "Crimes vs Percentage of People Under Poverty",
+    x = "Percentage Under Poverty",
+    y = "Violent Crimes per 100K"
+  ) +
+  theme_minimal()
+
+data %>%
+  group_by(wealth_category) %>%
+  summarise(
+  coef = cor(pctPoverty, violentPerPop, use = "complete.obs", method = "pearson"))
+
+```
+
+```{r}
+
+# Family vs crime
+
+family_statistics <- data %>%
+  select(medFamIncome, pct2Par, `pctWorkMom-6`, violentPerPop) %>%
+  drop_na()
+
+family_statistics <- family_statistics %>%
+  rename(
+    "Median Family Income" = medFamIncome,
+    "Percentage of families with two parents" = pct2Par,
+    "Percentage of working moms with young kids" = `pctWorkMom-6`
+  )
+
+# Geography vs crime
+
+```
 
 ## References
 
