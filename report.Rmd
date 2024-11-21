@@ -194,10 +194,10 @@ ggplot(data = family_statistics_long,
     alpha = 1  
     ) +
   labs(
-    x = "Working Moms",
+    x = "Number of Crimes",
      y = "Violent Crimes Per Population",
      title = "Histogram of Socioeconomic Level and Violent Crimes Per Population",
-    subtitle = "Grouped by "
+    subtitle = "Grouped by Income Levels, Number of Two Parent Families and Number of Working moms "
   ) +
   facet_wrap(~ Category,
              ncol = 3) # Histogram showing the relationship between family status and violent crimes
