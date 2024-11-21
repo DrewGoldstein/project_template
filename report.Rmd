@@ -115,37 +115,39 @@ data %>%
 
 ```
 
-```{r}
+```{r, echo=TRUE, warning=FALSE}
 
 family_statistics <- data %>%
   select(medFamIncome, pct2Par, `pctWorkMom-6`, violentPerPop) %>%
-  drop_na() %>% #Dropping all NAs
+  drop_na() %>% # Dropping all NAs
   rename(
     Median_Family_Income = medFamIncome,
     Families_with_two_parents = pct2Par,
     Working_moms = `pctWorkMom-6`
   ) %>% # Renaming variables
   mutate(
-    Income_Levels = cut(
-        Median_Family_Income,
-        breaks = quantile(Median_Family_Income, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-        labels = c("Low", "Medium", "High"),
-        include.lowest = TRUE
+    Median_Family_Income_Levels = cut(
+      Median_Family_Income,
+      breaks = quantile(Median_Family_Income, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+      labels = c("Low", "Medium", "High"),
+      include.lowest = TRUE
     ),
-    Two_Parent_Families = cut(
-        Families_with_two_parents,
-        breaks = quantile(Families_with_two_parents, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-        labels = c("Low", "Medium", "High"),
-        include.lowest = TRUE
+    Number_of_Two_Parent_Families = cut(
+      Families_with_two_parents,
+      breaks = quantile(Families_with_two_parents, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+      labels = c("Low", "Medium", "High"),
+      include.lowest = TRUE
     ),
-    Working_Moms = cut(
-        Working_moms,
-        breaks = quantile(Working_moms, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-        labels = c("Low", "Medium", "High"),
-        include.lowest = TRUE
-    )
+    Number_of_Working_Moms = cut(
+      Working_moms,
+      breaks = quantile(Working_moms, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+      labels = c("Low", "Medium", "High"),
+      include.lowest = TRUE
+      )
 ) # Mutating to create three levels (Low, Medium, High) for income, percentage of two parent families an working moms
+```
 
+```{r, echo=TRUE, warning=FALSE}
 family_statistics_summary <- family_statistics %>%
   summarise(across(where(is.numeric),
       list(
@@ -156,11 +158,13 @@ family_statistics_summary <- family_statistics %>%
         max = ~max(.x, na.rm = TRUE)
       ),
       .names = "{.col}_{.fn}"))
-print(family_statistics_summary) #Calculating simple summary statistics
+print(family_statistics_summary) # Calculating simple summary statistics
+```
 
+```{r, echo=TRUE, warning=FALSE}
 family_statistics_long <- family_statistics %>%
   pivot_longer(
-    cols = c(Income_Levels, Two_Parent_Families, Working_Moms),
+    cols = c(Median_Family_Income_Levels, Number_of_Two_Parent_Families, Number_of_Working_Moms),
     names_to = "Category",
     values_to = "Level"
   ) # Combining Levels (Low, Medium, High) and Category (Income_Levels, Two_Parent_Families, Working_Moms)
@@ -168,8 +172,15 @@ family_statistics_long <- family_statistics %>%
 family_statistics_long <- family_statistics_long %>%
   mutate(
     Level = factor(Level, levels = c("Low", "Medium", "High"))
-  )
+  ) # Defining Level
 
+family_statistics_long <- family_statistics_long %>%
+  mutate(
+    Category = str_replace_all(Category, "_", " ")
+    ) # Deleting underscore from variable names
+```
+
+```{r, echo=TRUE, warning=FALSE}
 ggplot(family_statistics_long, 
        aes(x = Level, 
            y = violentPerPop, 
@@ -177,31 +188,39 @@ ggplot(family_statistics_long,
   geom_boxplot() +
   facet_wrap(~ Category, scales = "free") +
   labs(
-    title = "Boxplot of Violent Crimes per Population by Socioeconomic Factors",
+    title = "Boxplot of Violent Crimes Per Population by Socioeconomic Levels of Families",
+    subtitle = "Grouped by Median Family Income, Number of Two Parent Families and Number of Working moms",
     x = "Socioeconomic Levels",
-    y = "Violent Crimes Per Population"
+    y = "Number of violent Crimes Per Population"
   ) +
   theme_minimal() +
-  theme_bw() #Box plot showing the relationship between familial status and violent crimes
+  theme_bw() +
+  theme(
+    plot.subtitle = element_text(size = 10) 
+  )# Box plot showing the relationship between familial status and violent crimes
+```
 
+```{r, echo=TRUE, warning=FALSE}
 ggplot(data = family_statistics_long, 
        mapping = aes(
          x = violentPerPop,
          fill = Level
          )) +
   geom_histogram(
-    bins = 20,
-    alpha = 1  
+    bins = 50,
+    alpha = 1 
     ) +
   labs(
     x = "Number of Crimes",
-     y = "Violent Crimes Per Population",
+     y = "Number of Violent Crimes Per Population",
      title = "Histogram of Socioeconomic Level and Violent Crimes Per Population",
-    subtitle = "Grouped by Income Levels, Number of Two Parent Families and Number of Working moms "
+    subtitle = "Grouped by Median Family Income, Number of Two Parent Families and Number of Working moms"
   ) +
   facet_wrap(~ Category,
-             ncol = 3) # Histogram showing the relationship between family status and violent crimes
-
+             ncol = 3) +
+  theme(
+    plot.subtitle = element_text(size = 10) 
+  ) # Histogram showing the relationship between family status and violent crimes
 ```
 
 ``` {r} 
