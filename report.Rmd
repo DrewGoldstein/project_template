@@ -205,7 +205,7 @@ family_statistics_long <- family_statistics_long %>%
 family_statistics_long <- family_statistics_long %>%
   mutate(
     Category = str_replace_all(Category, "_", " ")
-    )
+)
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
@@ -257,7 +257,7 @@ ggplot(data = family_statistics_long,
 ```{r, echo=TRUE, warning=FALSE}
 library(patchwork)
 
-plot1 <- ggplot(family_statistics_long, aes(
+two_parents_vs_crime <- ggplot(family_statistics_long, aes(
   x = Families_with_two_parents,
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "forestgreen") +
@@ -274,7 +274,7 @@ plot1 <- ggplot(family_statistics_long, aes(
     axis.title.y = element_text(size = 7)
   )
 
-plot2 <- ggplot(family_statistics_long, aes(
+income_vs_crime <- ggplot(family_statistics_long, aes(
   x = Median_Family_Income,
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "red") +
@@ -291,7 +291,7 @@ plot2 <- ggplot(family_statistics_long, aes(
     axis.title.y = element_text(size = 7)
   )
 
-plot3 <- ggplot(family_statistics_long, aes(
+moms_vs_crime <- ggplot(family_statistics_long, aes(
   x = Working_moms, 
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "yellow") +
@@ -308,8 +308,8 @@ plot3 <- ggplot(family_statistics_long, aes(
     axis.title.y = element_text(size = 7)
   )
 
-combined_plot <- plot1 + plot2 + plot3 + plot_layout(ncol = 2)
-combined_plot
+combined_plot <- two_parents_vs_crime + income_vs_crime + moms_vs_crime + plot_layout(ncol = 2)
+print(combined_plot)
 ```
 
 ``` {r, echo = TRUE, warning = FALSE} 
