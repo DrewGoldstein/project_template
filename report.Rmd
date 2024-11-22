@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidyr)
 library(leaflet)
+library(patchwork)
 ```
 
 
@@ -255,7 +256,6 @@ ggplot(data = family_statistics_long,
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
-library(patchwork)
 
 two_parents_vs_crime <- ggplot(family_statistics_long, aes(
   x = Families_with_two_parents,
