@@ -242,7 +242,7 @@ ggplot(data = family_statistics_long,
     ) +
   labs(
     x = "Number of Crimes",
-     y = "Number of Violent Crimes Per Population",
+     y = "Frequency",
      title = "Histogram of Socioeconomic Level and Violent Crimes Per Population",
     subtitle = "Grouped by Median Family Income, Number of Two Parent Families and Number of Working moms"
   ) +
