@@ -105,7 +105,7 @@ ggplot(data, aes(x = wealth_category, y = violentPerPop, fill = wealth_category)
   theme_minimal()
 ```
 
-We spot a clear relation between the economic level of a city and the level of violent, that is, as the level of wealth increases, the level of violent decreases.
+We spot a clear relation between the economic level of a city and the level of violence, that is, as the level of wealth increases, the level of violence decreases.
 
 However, recall that the income per capita is mathematically defined as follows:
 $$
@@ -113,9 +113,9 @@ perCapInc = \frac{\text{Total Income}}{Population}
 $$
 That means, if the total income is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population. This encourages us to include some other variable that better measures this distribution.
 
-Let's take a look at the pctPoverty variable (percentage of people under poverty). It is well-known that as the population under poverty increases in a country, then does the level of crime as well.
+Let's take a look at the pctPoverty variable (percentage of people under poverty). It is well-known that as the population under poverty increases in a country, then so does the level of crime as well.
 
-Nevertheless, something interesting happens when we observe the relation between the poverty and crime for each of the wealth categories:
+Nevertheless, something interesting happens when we observe the relation between poverty and crime for each of the wealth categories:
 
 ```{r, echo = TRUE, warning=FALSE}
 ggplot(data, aes(x = pctPoverty, y = violentPerPop)) +
