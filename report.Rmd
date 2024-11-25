@@ -155,8 +155,8 @@ family_statistics <- data %>%
   mutate(
     Median_Family_Income_Levels = cut(
       Median_Family_Income,
-      breaks = quantile(Median_Family_Income, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-      labels = c("Low", "Medium", "High"),
+      breaks = quantile(Median_Family_Income, probs = c(0, 0.1, 0.5, 0.9, 0.99, 1), na.rm = TRUE),
+      labels = c( "Very Low", "Low", "Medium", "High", "Very High"),
       include.lowest = TRUE
     ),
     Number_of_Two_Parent_Families = cut(
@@ -201,7 +201,7 @@ family_statistics_long <- family_statistics %>%
 # Defining Level
 family_statistics_long <- family_statistics_long %>%
   mutate(
-    Level = factor(Level, levels = c("Low", "Medium", "High"))
+    Level = factor(Level, levels = c("Very Low", "Low", "Medium", "High", "Very High"))
   )
 
 # Deleting underscore from variable names
@@ -218,7 +218,7 @@ ggplot(family_statistics_long,
            y = violentPerPop, 
            fill = Level)) +
   geom_boxplot() +
-  facet_wrap(~ Category, scales = "free") +
+  facet_wrap(~ Category, scales = "free", ncol = 3) +
   labs(
     title = "Boxplot of Violent Crimes Per Population by Socioeconomic Levels of Families",
     subtitle = "Grouped by Median Family Income, Number of Two Parent Families and Number of Working moms",
@@ -229,41 +229,44 @@ ggplot(family_statistics_long,
   theme_bw() +
   theme(
     plot.subtitle = element_text(size = 10),
-    strip.text = element_text(size = 7)
+    strip.text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 45, hjust = 1)
   )
-```
-```{r, echo=TRUE, warning=FALSE}
- # Histogram showing the relationship between family status and violent crimes
-ggplot(data = family_statistics_long, 
-       mapping = aes(
-         x = violentPerPop,
-         fill = Level
-         )) +
-  geom_histogram(
-    bins = 50,
-    alpha = 1 
-    ) +
-  labs(
-    x = "Number of Crimes",
-     y = "Frequency",
-     title = "Histogram of Socioeconomic Level and Violent Crimes Per Population",
-    subtitle = "Grouped by Median Family Income, Number of Two Parent Families and Number of Working moms"
-  ) +
-  facet_wrap(~ Category,
-             ncol = 3) +
-  theme(
-    plot.subtitle = element_text(size = 10) 
-  )
-
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
 
+# Correlation for Families with Two Parents vs Violent Crimes
+two_parents_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Families_with_two_parents, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Correlation for Median Family Income vs Violent Crimes
+median_income_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Median_Family_Income, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Correlation for Working Moms vs Violent Crimes
+working_moms_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Working_moms, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Scatter plot with line of best fit
 two_parents_vs_crime <- ggplot(family_statistics_long, aes(
   x = Families_with_two_parents,
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "forestgreen") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Families_with_two_parents, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(two_parents_correlation, 3)),
+    hjust = 1, size = 3
+  ) +
   labs(
     title = "Crimes per Population and Number of Families with Two Parents",
     x = "Number of Families with Two Parents",
@@ -281,6 +284,13 @@ income_vs_crime <- ggplot(family_statistics_long, aes(
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "red") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Median_Family_Income, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(median_income_correlation, 3)),
+    hjust = 1, size = 3
+  ) +
   labs(
     title = "Crimes per Population and Median Family Income",
     x = "Median Family Income",
@@ -298,6 +308,13 @@ moms_vs_crime <- ggplot(family_statistics_long, aes(
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "yellow") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Working_moms, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(working_moms_correlation, 3)),
+    hjust = 1, size = 3
+  ) +
   labs(
     title = "Crimes per Population and Number of Families With Working Moms",
     x = "Number of Families With Working Moms",
@@ -310,8 +327,10 @@ moms_vs_crime <- ggplot(family_statistics_long, aes(
     axis.title.y = element_text(size = 7)
   )
 
+# Display combined plot
 combined_plot <- two_parents_vs_crime + income_vs_crime + moms_vs_crime + plot_layout(ncol = 2)
 print(combined_plot)
+
 ```
 
 
