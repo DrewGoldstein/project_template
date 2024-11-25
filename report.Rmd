@@ -373,12 +373,14 @@ ggplot(data_train_augmented, aes(x = .pred, y = .resid)) +
   theme_minimal()
 ```
 
-```{r echo = TRUE, warning = FALSE}
+
+
+```{r}
 # Geospatial data available at the geojson format
 tmp_geojson <- tempfile(fileext = ".geojson")
 
 # Geospatial data available at the geojson format
-tmp_geojson <- "/Users/dimitrisagouridis/GroupProject/data/continental-us-states.json"
+tmp_geojson <- "data/continental-us-states.json"
 
 
 # Load necessary packages
@@ -389,12 +391,12 @@ library(dplyr)
 # Read the GeoJSON file
 my_sf <- read_sf(tmp_geojson)
 
-# Ensure state names in my_sf are uppercase to match the violentPerPop dataset
+# Ensure state names in my_sf are uppercase to match the dataset
 my_sf$name <- toupper(my_sf$name)
 
-# Join the GeoJSON spatial data with the violentPerPop dataset
+# Join the GeoJSON spatial data with the dataset
 choropleth_data <- my_sf %>%
-  left_join(violentPerPop, by = c("name" = "state_name"))
+  mutate(value = violentPerPop$value[match(name, violentPerPop$state_name)])
 
 # Create a choropleth map using ggplot2 with a customized style
 p <- ggplot(choropleth_data) +
@@ -403,7 +405,7 @@ p <- ggplot(choropleth_data) +
   scale_fill_gradient(
     low = "lightcoral", high = "darkred",
     na.value = "grey50",
-    name = "Violence Rate",
+    name = "Violent Crimes Commited per 100k",
     guide = guide_legend(
       keyheight = unit(3, units = "mm"),
       keywidth = unit(12, units = "mm"),
@@ -414,8 +416,7 @@ p <- ggplot(choropleth_data) +
   ) +
   labs(
     title = "Map of USA Showing Violent Crimes Commited per 100k",
-    subtitle = "",
-    caption = "Data: violentPerPop"
+
   ) +
   theme(
     text = element_text(color = "#22211d"),
@@ -429,30 +430,15 @@ p <- ggplot(choropleth_data) +
         unit = "cm"
       )
     ),
-    plot.subtitle = element_text(
-      size = 15, hjust = 0.01,
-      color = "#4e4d47",
-      margin = margin(
-        b = -0.1, t = 0.43, l = 2,
-        unit = "cm"
-      )
-    ),
-    plot.caption = element_text(
-      size = 7,
-      color = "#4e4d47",
-      margin = margin(
-        b = 0.3, r = -0.99, t = 0.3,
-        unit = "cm"
-      )
-    ),
-    legend.position = c(0.7, 0.09)
+    
+    legend.position = c(0.2, 0.09)
   )
 
 # Print the plot
 print(p)
 
-```
 
+```
 
 ## References
 
