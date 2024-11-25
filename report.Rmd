@@ -15,6 +15,7 @@ library(tidyverse)
 library(tidyr)
 library(leaflet)
 library(patchwork)
+library(tidymodels)
 ```
 
 
@@ -346,10 +347,36 @@ data_map <- leaflet(map_data) %>%
                    "Police Per Pop: ", policePerPop)
   )
 
-# Print the map
+```
 
-data_map
+```{r echo = TRUE, warning = FALSE}
 
+set.seed(1234)
+datasplit <- initial_split(data)
+data_train <- training(datasplit)
+data_test  <- testing(datasplit)
+
+# During the meeting, the idea is to change the variables after "~" in the following line, and decide the best model to use.
+
+data_mod <- linear_reg() %>%
+  set_engine("lm")
+
+data_rec <- recipe(violentPerPop ~ pctPoverty, data = data_train)
+
+data_wflow <- workflow() %>%
+  add_model(data_mod) %>%
+  add_recipe(data_rec)
+
+data_fit <- data_wflow %>%
+  fit(data = data_train)
+
+data_train_pred <- data_fit %>%
+  predict(data_train) %>%
+  bind_cols(data_train %>% select(violentPerPop,communityname))
+
+data_train_pred
+
+rsq(data_train_pred, truth = violentPerPop, estimate = .pred)
 ```
 
 ## References
