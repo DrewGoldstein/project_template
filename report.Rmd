@@ -175,21 +175,6 @@ family_statistics <- data %>%
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
-# Calculating simple summary statistics
-family_statistics_summary <- family_statistics %>%
-  summarise(across(where(is.numeric),
-      list(
-        mean = ~mean(.x, na.rm = TRUE),
-        median = ~median(.x, na.rm = TRUE),
-        sd = ~sd(.x, na.rm = TRUE),
-        min = ~min(.x, na.rm = TRUE),
-        max = ~max(.x, na.rm = TRUE)
-      ),
-      .names = "{.col}_{.fn}"))
-family_statistics_summary
-```
-
-```{r, echo=TRUE, warning=FALSE}
 # Combining Levels (Low, Medium, High) and Category (Income_Levels, Two_Parent_Families, Working_Moms)
 family_statistics_long <- family_statistics %>%
   pivot_longer(
