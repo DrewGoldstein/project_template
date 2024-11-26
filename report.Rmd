@@ -15,6 +15,8 @@ library(tidyverse)
 library(tidyr)
 library(leaflet)
 library(patchwork)
+library(tidymodels)
+library(sf)
 ```
 
 
@@ -103,7 +105,7 @@ ggplot(data, aes(x = wealth_category, y = violentPerPop, fill = wealth_category)
   theme_minimal()
 ```
 
-We spot a clear relation between the economic level of a city and the level of violent, that is, as the level of wealth increases, the level of violent decreases.
+We spot a clear relation between the economic level of a city and the level of violence, that is, as the level of wealth increases, the level of violence decreases.
 
 However, recall that the income per capita is mathematically defined as follows:
 $$
@@ -111,9 +113,9 @@ perCapInc = \frac{\text{Total Income}}{Population}
 $$
 That means, if the total income is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population. This encourages us to include some other variable that better measures this distribution.
 
-Let's take a look at the pctPoverty variable (percentage of people under poverty). It is well-known that as the population under poverty increases in a country, then does the level of crime as well.
+Let's take a look at the pctPoverty variable (percentage of people under poverty). It is well-known that as the population under poverty increases in a country, then so does the level of crime as well.
 
-Nevertheless, something interesting happens when we observe the relation between the poverty and crime for each of the wealth categories:
+Nevertheless, something interesting happens when we observe the relation between poverty and crime for each of the wealth categories:
 
 ```{r, echo = TRUE, warning=FALSE}
 ggplot(data, aes(x = pctPoverty, y = violentPerPop)) +
@@ -153,8 +155,8 @@ family_statistics <- data %>%
   mutate(
     Median_Family_Income_Levels = cut(
       Median_Family_Income,
-      breaks = quantile(Median_Family_Income, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-      labels = c("Low", "Medium", "High"),
+      breaks = quantile(Median_Family_Income, probs = c(0, 0.1, 0.5, 0.9, 0.99, 1), na.rm = TRUE),
+      labels = c( "Very Low", "Low", "Medium", "High", "Very High"),
       include.lowest = TRUE
     ),
     Number_of_Two_Parent_Families = cut(
@@ -199,7 +201,7 @@ family_statistics_long <- family_statistics %>%
 # Defining Level
 family_statistics_long <- family_statistics_long %>%
   mutate(
-    Level = factor(Level, levels = c("Low", "Medium", "High"))
+    Level = factor(Level, levels = c("Very Low", "Low", "Medium", "High", "Very High"))
   )
 
 # Deleting underscore from variable names
@@ -216,7 +218,7 @@ ggplot(family_statistics_long,
            y = violentPerPop, 
            fill = Level)) +
   geom_boxplot() +
-  facet_wrap(~ Category, scales = "free") +
+  facet_wrap(~ Category, scales = "free", ncol = 3) +
   labs(
     title = "Boxplot of Violent Crimes Per Population by Socioeconomic Levels of Families",
     subtitle = "Grouped by Median Family Income, Number of Two Parent Families and Number of Working moms",
@@ -227,41 +229,44 @@ ggplot(family_statistics_long,
   theme_bw() +
   theme(
     plot.subtitle = element_text(size = 10),
-    strip.text = element_text(size = 7)
+    strip.text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 45, hjust = 1)
   )
-```
-```{r, echo=TRUE, warning=FALSE}
- # Histogram showing the relationship between family status and violent crimes
-ggplot(data = family_statistics_long, 
-       mapping = aes(
-         x = violentPerPop,
-         fill = Level
-         )) +
-  geom_histogram(
-    bins = 50,
-    alpha = 1 
-    ) +
-  labs(
-    x = "Number of Crimes",
-     y = "Frequency",
-     title = "Histogram of Socioeconomic Level and Violent Crimes Per Population",
-    subtitle = "Grouped by Median Family Income, Number of Two Parent Families and Number of Working moms"
-  ) +
-  facet_wrap(~ Category,
-             ncol = 3) +
-  theme(
-    plot.subtitle = element_text(size = 10) 
-  )
-
 ```
 
 ```{r, echo=TRUE, warning=FALSE}
 
+# Correlation for Families with Two Parents vs Violent Crimes
+two_parents_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Families_with_two_parents, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Correlation for Median Family Income vs Violent Crimes
+median_income_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Median_Family_Income, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Correlation for Working Moms vs Violent Crimes
+working_moms_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Working_moms, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Scatter plot with line of best fit
 two_parents_vs_crime <- ggplot(family_statistics_long, aes(
   x = Families_with_two_parents,
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "forestgreen") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Families_with_two_parents, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(two_parents_correlation, 3)),
+    hjust = 1, size = 3
+  ) +
   labs(
     title = "Crimes per Population and Number of Families with Two Parents",
     x = "Number of Families with Two Parents",
@@ -279,6 +284,13 @@ income_vs_crime <- ggplot(family_statistics_long, aes(
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "red") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Median_Family_Income, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(median_income_correlation, 3)),
+    hjust = 1, size = 3
+  ) +
   labs(
     title = "Crimes per Population and Median Family Income",
     x = "Median Family Income",
@@ -296,6 +308,13 @@ moms_vs_crime <- ggplot(family_statistics_long, aes(
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "yellow") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Working_moms, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(working_moms_correlation, 3)),
+    hjust = 1, size = 3
+  ) +
   labs(
     title = "Crimes per Population and Number of Families With Working Moms",
     x = "Number of Families With Working Moms",
@@ -308,52 +327,120 @@ moms_vs_crime <- ggplot(family_statistics_long, aes(
     axis.title.y = element_text(size = 7)
   )
 
+# Display combined plot
 combined_plot <- two_parents_vs_crime + income_vs_crime + moms_vs_crime + plot_layout(ncol = 2)
 print(combined_plot)
+
 ```
 
-``` {r, echo = TRUE, warning = FALSE} 
-# Filter and prepare the data
 
-map_data <- data %>%
-  filter(!is.na(latitude) & !is.na(longitude) & !is.na(policePerPop) & !is.na(violentPerPop)) %>%
-  mutate(
-    violentPerPop_n = violentPerPop / (max(violentPerPop)),
-    policePerPop_n = policePerPop / (max(policePerPop))
-    ) %>%
-  select(State, communityname, violentPerPop, policePerPop, latitude, longitude, violentPerPop_n, policePerPop_n)
 
-# Create a leaflet map
+```{r echo = TRUE, warning = FALSE}
 
-data_map <- leaflet(map_data) %>%
-  addProviderTiles(providers$CartoDB.Positron) %>%
-  addCircleMarkers(
-    lng = ~longitude, lat = ~latitude,
-    radius = ~pmax(violentPerPop_n * 15, 3),
-    color = "red",
-    stroke = FALSE,
-    fillOpacity = 0.5,
-    popup = ~paste("Community: ", communityname, "<br>",
-                   "Violent Crimes per Pop: ", violentPerPop)
-  ) %>%
-  addCircleMarkers(
-    lng = ~longitude, lat = ~latitude,
-    radius = ~pmax(policePerPop_n * 15, 3),
-    color = "blue",
-    stroke = FALSE,
-    fillOpacity = 0.5,
-    popup = ~paste("Community: ", communityname, "<br>",
-                   "Police Per Pop: ", policePerPop)
+set.seed(1234)
+datasplit <- initial_split(data)
+data_train <- training(datasplit)
+data_test  <- testing(datasplit)
+
+# During the meeting, the idea is to change the variables after "~" in the following line, and decide the best model to use.
+
+data_mod <- linear_reg() %>%
+  set_engine("lm")
+
+data_rec <- recipe(violentPerPop ~ pctPoverty, data = data_train)
+
+data_wflow <- workflow() %>%
+  add_model(data_mod) %>%
+  add_recipe(data_rec)
+
+data_fit <- data_wflow %>%
+  fit(data = data_train)
+
+data_train_pred <- data_fit %>%
+  predict(data_train) %>%
+  bind_cols(data_train %>% select(violentPerPop,communityname))
+
+data_train_pred
+
+rsq(data_train_pred, truth = violentPerPop, estimate = .pred)
+
+data_train_augmented <- augment(data_fit, new_data = data_train)
+
+ggplot(data_train_augmented, aes(x = .pred, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Residuals Plot", x = "violentPerPop", y = "Residuals") +
+  theme_minimal()
+```
+
+
+
+```{r}
+# Geospatial data available at the geojson format
+tmp_geojson <- tempfile(fileext = ".geojson")
+
+# Geospatial data available at the geojson format
+tmp_geojson <- "data/continental-us-states.json"
+
+
+# Load necessary packages
+library(sf)
+library(ggplot2)
+library(dplyr)
+
+# Read the GeoJSON file
+my_sf <- read_sf(tmp_geojson)
+
+# Ensure state names in my_sf are uppercase to match the dataset
+my_sf$name <- toupper(my_sf$name)
+
+# Join the GeoJSON spatial data with the dataset
+choropleth_data <- my_sf %>%
+  mutate(value = violentPerPop$value[match(name, violentPerPop$state_name)])
+
+# Create a choropleth map using ggplot2 with a customized style
+p <- ggplot(choropleth_data) +
+  geom_sf(aes(fill = value), linewidth = 0, alpha = 0.9) +
+  theme_void() +
+  scale_fill_gradient(
+    low = "lightcoral", high = "darkred",
+    na.value = "grey50",
+    name = "Violent Crimes Commited per 100k",
+    guide = guide_legend(
+      keyheight = unit(3, units = "mm"),
+      keywidth = unit(12, units = "mm"),
+      label.position = "bottom",
+      title.position = "top",
+      nrow = 1
+    )
+  ) +
+  labs(
+    title = "Map of USA Showing Violent Crimes Commited per 100k",
+
+  ) +
+  theme(
+    text = element_text(color = "#22211d"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.title = element_text(
+      size = 14, hjust = 0.01, color = "#4e4d47",
+      margin = margin(
+        b = -0.1, t = 0.4, l = 2,
+        unit = "cm"
+      )
+    ),
+    
+    legend.position = c(0.2, 0.09)
   )
 
-# Print the map
+# Print the plot
+print(p)
 
-data_map
 
 ```
 
 ## References
 
 List any references here. You should, at a minimum, list your data source.
-
 
