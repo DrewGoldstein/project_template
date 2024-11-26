@@ -69,6 +69,7 @@ class: inverse, center, middle
  - What kind of data does it contain? The dataset contains string, numerical and categorical data.
  - What are the attributes? Multiple for location and then the socioeconomic factors as well as the violent crimes per population 
  - What kind of questions can this data potentially answer? This data could answer a quesiton regarding the role that socioeconomic factors play in determining violent crime density
+ - the data is normalised between 0 and 1 
 
 ---
 
@@ -93,27 +94,48 @@ Education Level (PctNotHSGrad, PctBSorMore): Areas with lower education levels o
 
 These indicators are all similar so it would only be useful to investigate say one or two of these as they are highly correlated with each other. We shall try and determine which has the greatest correlation by way of line of best fit.
 
+Percentage of Youth (agePct12t21, agePct12t29): Younger populations, particularly in the 12-29 age range, often correlate with higher violent crime rates.
 
+Percentage of Population Living in Urban Areas (pctUrban): Higher urbanization is typically associated with higher crime rates.
+
+Race Percentages (e.g., racePctBlack, racePctHisp): Race can be indirectly related to crime due to socio-economic factors, though it’s crucial to consider these variables in combination with others.
+
+Police Officers (LemasSwornFTPerPop): The ratio of police officers per 100,000 people can impact crime rates. However, more police could also reflect higher crime levels that demand more resources, so this variable should be interpreted carefully.
 
 ---
 
 # Methods
+
+
 
 ---
 
 # Summarise Cleaning
 
 The dataset was imported from ... as a .txt file however had a format of a .data file? The column names were stored in a seperate .names file which had information pertaining to the dataset and variables as well as sources and methods. The columns were read from the text file and stored in a df with the column names being read in and stored as the column names. At this point the state was stored as a numerical value and so we got the relevant state codes from ... and replaced the numbers with codes.
+The unnormalized version of the data was found online and then joined to our dataset. 
 
 ---
 
 # Pre-Processing
+
+In order to find a suitable economic variable to model the violence in a given city, we'll start by taking a look at the income per capita.
+
+Let's equally split the variable perCapInc into four categories representing the level of wealth of each city, and let's visualize the relation of these categories with the ViolentPerPop:
 
 ---
 
 # Description of Techniques Used
 
 Scatter plots were used to determine a relationship between variables and violent crimes per population, this was important as it allowed us to determine which variables were correlated and should be used in our model. 
+
+We spot a clear relation between the economic level of a city and the level of violence, that is, as the level of wealth increases, the level of violence decreases.
+
+However, recall that the income per capita is mathematically defined as follows:
+$$
+perCapInc = \frac{\text{Total Income}}{Population}
+$$
+That means, if the total income is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population. This encourages us to include some other variable that better measures this distribution.
 
 ---
 
