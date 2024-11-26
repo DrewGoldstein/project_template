@@ -365,21 +365,13 @@ ggplot(data_train_augmented, aes(x = .pred, y = .resid)) +
 
 ```{r}
  
-# Geospatial data available at the geojson format
 tmp_geojson <- "data/us-states.json"
  
-# Load necessary packages
-library(sf)
-library(dplyr)
-library(leaflet)
- 
-# Read the GeoJSON file
 my_sf <- read_sf(tmp_geojson)
  
  
 my_sf$name <- toupper(my_sf$name)
  
-# Join the GeoJSON spatial data with your dataset 'data', handling missing values
 my_sf_merged <- my_sf %>%
   left_join(data, by = c("name" = "state_name")) %>%
   mutate(value = ifelse(is.na(violentPerPop), 0.01, violentPerPop))
@@ -387,10 +379,8 @@ my_sf_merged <- my_sf %>%
  
 min_value <- min(my_sf_merged$value, na.rm = TRUE)
  
-# Create a color palette with domain from min_value to 3000
 pal <- colorNumeric(palette = "YlOrRd", domain = c(min_value, 3000))
  
-# Create a choropleth map using leaflet
 leaflet(data = my_sf_merged) %>%
   addTiles() %>%
   addPolygons(
@@ -421,26 +411,16 @@ leaflet(data = my_sf_merged) %>%
     title = "Violent Crimes per 100k",
     position = "bottomright"
   )
- 
- 
 ```
  
 ```{r}
-# Geospatial data available at the geojson format
 tmp_geojson <- "data/us-states.json"
  
-# Load necessary packages
-library(sf)
-library(dplyr)
-library(leaflet)
- 
-# Read the GeoJSON file
 my_sf <- read_sf(tmp_geojson)
  
  
 my_sf$name <- toupper(my_sf$name)
  
-# Join the GeoJSON spatial data with your dataset 'data', handling missing values
 my_sf_merged <- my_sf %>%
   left_join(data, by = c("name" = "state_name")) %>%
   mutate(value = ifelse(is.na(policePerPop), 0.01, policePerPop))
@@ -477,7 +457,7 @@ leaflet(data = my_sf_merged) %>%
   ) %>%
   addLegend(
     pal = pal,
-    values = c(min_value, 500),  # Adjust the legend scale
+    values = c(min_value, 500),
     opacity = 0.7,
     title = "Police Officers per 100k",
     position = "bottomright"
