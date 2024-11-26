@@ -1,7 +1,7 @@
 ---
-title: "Presentation title"
+title: "Building A Model to Determine the Relationship Between Socio-Economic Factors and Crime"
 subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> Names of team members"
+author: "Crime Crunchers <br> Drew Goldstein, Manuel Cabrera, Dmitriis, Dimitriis, Shane, Samuel Prior"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
@@ -53,21 +53,62 @@ style_xaringan(
 
 class: center, middle
 
-## A statement of the overall goal / research question
+## The Goal Is to Detmerine the Relationship Between Socio-Economic Factors and Crime per Population
 
 ---
 
 class: inverse, center, middle
 
-# Section title
+# Introduction
+
 
 ---
 
-# Hello World
+# What is The Data?
 
-- Click the `Knit` button to compile your presentation
 
-- Make sure to commit and push all resulting files to your GitHub repo
+
+---
+
+
+# What is the Question?
+
+
+---
+
+# Background Info
+
+---
+
+# Methods
+
+---
+
+# Summarise Cleaning
+
+---
+
+# Pre-Processing
+
+---
+
+# Description of Techniques Used
+
+---
+
+# Results
+
+---
+
+# Results in Context
+
+---
+
+# Discussion
+
+---
+
+# With More Time?
 
 ---
 
