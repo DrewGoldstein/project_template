@@ -98,7 +98,6 @@ Percentage of Youth (agePct12t21, agePct12t29): Younger populations, particularl
 
 Percentage of Population Living in Urban Areas (pctUrban): Higher urbanization is typically associated with higher crime rates.
 
-Race Percentages (e.g., racePctBlack, racePctHisp): Race can be indirectly related to crime due to socio-economic factors, though it’s crucial to consider these variables in combination with others.
 
 Police Officers (LemasSwornFTPerPop): The ratio of police officers per 100,000 people can impact crime rates. However, more police could also reflect higher crime levels that demand more resources, so this variable should be interpreted carefully.
 
