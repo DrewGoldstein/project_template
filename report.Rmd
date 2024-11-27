@@ -367,20 +367,6 @@ ggplot(data, aes(x = violentPerPop)) +
     axis.text.x = element_text(angle = 90, hjust = 1)
   )
 
-ggplot(data, aes(x = violentPerPop)) +
-  geom_histogram(bins = 30, color = "black", fill = "lightgreen") +
-  facet_wrap(~ wealth_group, scales = "free_y") +
-  labs(
-    title = "Distribution of crime per each wealth group",
-    x = "Violent crimes per 100K",
-    y = "Frequency"
-  ) +
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 12, face = "bold"),
-    axis.text.x = element_text(angle = 90, hjust = 1)
-  )
-
 ```
 
 
