@@ -1,6 +1,6 @@
 ---
-title: "Project title"
-author: "by Team-Name: User1, User2, User3, User4 & User5"
+title: "Communities and Crimes in the US"
+author: "by Crime-Crunchers: User1, User2, User3, User4 & User5"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -57,44 +57,62 @@ data <- data %>%
 
 ## Research Question
 
-Which factors influence more on the crime level of a city in the United States? (Clearly we should refine this statement)
-
-
-
-
+"What economic, social, and demographic factors most significantly influence the crime rates in cities across the United States?"
 
 ## Data
 
-Briefly describe your dataset here - include a description of the key variables you will be investigating. 
-Include a citation for your data. 
-See http://libraryguides.vu.edu.au/c.php?g=386501&p=4347840 for guidance on proper citation for datasets. 
-If you got your data off the web, make sure to state the retrieval date.
+The dataset we'll be using contains socio-economic data from the '90 Census, law enforcement data from the 1990 Law Enforcement Management and Admin Stats survey, and crime data from the 1995 FBI UCR.
 
+The variables we'll be working with were split in three major groups:
 
+**Economic:**
 
+- pctPoverty: percentage of people under poverty
 
+- perCapInc: income per capita
+
+**Social**
+
+- medFamIncome: median income of families
+
+- pct2Par: percentage of families with two parents
+
+- pctWorkMom-6: percentage of moms of kids 6 and under in labor force
+
+**Demographic**
+
+- popDensity: population density
+
+- policePerPop: police officers per 100K population
+
+Each group of variables will be analysed separately, and we'll pick up one per group (three in total), and find the best way of making a linear regression model (whether it is better to include the three of them, just two, or even to use just one predictive variable).
 
 
 ## Findings
 
-## Economic variables
+## Economic analysis
 
 In order to find a suitable economic variable to model the violence in a given city, we'll start by taking a look at the income per capita.
 
-Let's equally split the variable perCapInc into four categories representing the level of wealth of each city, and let's visualize the relation of these categories with the ViolentPerPop:
+We will create a categorical variable called wealth_group to divide the perCapInc variable into quartiles, ensuring that each category contains the same number of cities.
+
+It’s worth noting that this division is not intended to represent “social classes,” as the upper class typically makes up only a very small portion of the population. However, dividing the variable this way is important for the analysis that follows, as it helps avoid biased conclusions that could arise if one group had significantly more cities than another.
 
 ```{r, echo = TRUE, warning = FALSE}
 data <- data %>%
   mutate(
-    wealth_category = cut(
-      perCapInc,
-      breaks = quantile(perCapInc, probs = seq(0, 1, 0.25), na.rm = TRUE),
-      include.lowest = TRUE,
-      labels = c("Low wealth", "Middle-Low wealth", "Middle-High Wealth", "High Wealth")
+    wealth_group = factor(
+      cut(
+        perCapInc,
+        breaks = quantile(perCapInc, probs = seq(0, 1, 0.25), na.rm = TRUE),
+        include.lowest = TRUE,
+        labels = c("First Wealth Group", "Second Wealth Group", "Third Wealth Group", "Fourth Wealth Group")
+      ),
+      levels = c("First Wealth Group", "Second Wealth Group", "Third Wealth Group", "Fourth Wealth Group")
     )
   )
 
-ggplot(data, aes(x = wealth_category, y = violentPerPop, fill = wealth_category)) +
+ggplot(data, aes(x = wealth_group, y = violentPerPop, fill = wealth_group)) +
   geom_boxplot(alpha = 0.7) +
   labs(
     title = "Violent Crimes per each wealth category",
@@ -108,19 +126,19 @@ We spot a clear relation between the economic level of a city and the level of v
 
 However, recall that the income per capita is mathematically defined as follows:
 $$
-perCapInc = \frac{\text{Total Income}}{Population}
+perCapInc = \frac{\text{Total Income}}{\text{Population}}
 $$
-That means, if the total income is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population. This encourages us to include some other variable that better measures this distribution.
+That means, if the total income within a given area is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population. This encourages us to include some other variable that better measures this distribution.
 
 Let's take a look at the pctPoverty variable (percentage of people under poverty). It is well-known that as the population under poverty increases in a country, then so does the level of crime as well.
 
 Nevertheless, something interesting happens when we observe the relation between poverty and crime for each of the wealth categories:
 
-```{r, echo = TRUE, warning=FALSE}
+```{r, echo = TRUE, warning=FALSE, message = FALSE}
 ggplot(data, aes(x = pctPoverty, y = violentPerPop)) +
   geom_point(alpha = 0.6, color = "blue") +
   geom_smooth(method = "lm", color = "red", se = FALSE) +
-  facet_wrap(~ wealth_category, scales = "free") +
+  facet_wrap(~ wealth_group, scales = "free") +
   labs(
     title = "Crimes vs Percentage of People Under Poverty",
     x = "Percentage Under Poverty",
@@ -128,20 +146,26 @@ ggplot(data, aes(x = pctPoverty, y = violentPerPop)) +
   ) +
   theme_minimal()
 
-data %>%
-  group_by(wealth_category) %>%
-  summarise(
-  coef = cor(pctPoverty, violentPerPop, use = "complete.obs", method = "pearson"))
-
 ```
 
-The plots above show that there's a stronger linear relationship between the percentage of people under poverty and the crime level as the wealth quality increases.
+The plots above show that there's a stronger linear relationship between the percentage of people under poverty and the crime level as the wealth quality increases (here is the need of having equally divided groups).
 
 An easy way to interpret these plots is by taking two different populations with the same percentage of poverty each one, and then, the population with **more** income per capita is likely to have a **higher** crime level, as there is a more unequal distribution of economic resources, and therefore, a higher perception of injustice by minorities. We summarize it in the following statement:
 
 "The crime level of a population is mostly influenced by the level of economic inequality, rather than the actual percentage of poverty".
 
-```{r, echo=TRUE, warning = FALSE}
+Furthermore, we can formally support the findings above by calculating the Pearson's correlation coefficient for each plot, and notice that they increase for each group.
+
+```{r, message = FALSE}
+data %>%
+  group_by(wealth_group) %>%
+  summarise(
+  coef = cor(pctPoverty, violentPerPop, use = "complete.obs", method = "pearson"))
+```
+
+## Social analysis
+
+```{r, echo=TRUE, warning = FALSE, message = FALSE}
 
 family_statistics <- data %>%
   select(medFamIncome, pct2Par, `pctWorkMom-6`, violentPerPop) %>%
@@ -173,7 +197,7 @@ family_statistics <- data %>%
 ) # Mutating to create three levels (Low, Medium, High) for income, percentage of two parent families an working moms
 ```
 
-```{r, echo=TRUE, warning=FALSE}
+```{r, echo=TRUE, warning=FALSE, message = FALSE}
 # Combining Levels (Low, Medium, High) and Category (Income_Levels, Two_Parent_Families, Working_Moms)
 family_statistics_long <- family_statistics %>%
   pivot_longer(
@@ -195,7 +219,7 @@ family_statistics_long <- family_statistics_long %>%
 )
 ```
 
-```{r, echo=TRUE, warning=FALSE}
+```{r, echo = TRUE, warning = FALSE, message = FALSE}
 # Box plot showing the relationship between familial status and violent crimes
 ggplot(family_statistics_long, 
        aes(x = Level, 
@@ -218,7 +242,7 @@ ggplot(family_statistics_long,
   )
 ```
 
-```{r, echo=TRUE, warning=FALSE}
+```{r, echo = TRUE, warning=FALSE, message = FALSE}
 
 # Correlation for Families with Two Parents vs Violent Crimes
 two_parents_correlation <- family_statistics_long %>%
@@ -317,9 +341,52 @@ print(combined_plot)
 
 ```
 
+## Demographic analysis
+
+```{r, echo=FALSE}
+
+data <- data %>%
+  mutate(density_category = case_when(
+    popDensity < quantile(popDensity, 0.33, na.rm = TRUE) ~ "Low",
+    popDensity < quantile(popDensity, 0.66, na.rm = TRUE) ~ "Medium",
+    TRUE ~ "High"
+  )) %>%
+  mutate(density_category = factor(density_category, levels = c("Low", "Medium", "High")))
+
+ggplot(data, aes(x = violentPerPop)) +
+  geom_histogram(bins = 30, color = "black", fill = "purple") +
+  facet_wrap(~ density_category, scales = "free_y") +
+  labs(
+    title = "Distribution of crime per each density category",
+    x = "Violent crimes per 100K",
+    y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text.x = element_text(angle = 90, hjust = 1)
+  )
+
+ggplot(data, aes(x = violentPerPop)) +
+  geom_histogram(bins = 30, color = "black", fill = "lightgreen") +
+  facet_wrap(~ wealth_group, scales = "free_y") +
+  labs(
+    title = "Distribution of crime per each wealth group",
+    x = "Violent crimes per 100K",
+    y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text.x = element_text(angle = 90, hjust = 1)
+  )
+
+```
 
 
-```{r}
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
  
 tmp_geojson <- "data/us-states.json"
  
@@ -369,13 +436,7 @@ leaflet(data = my_sf_merged) %>%
   )
 ```
  
-```{r}
-tmp_geojson <- "data/us-states.json"
- 
-my_sf <- read_sf(tmp_geojson)
- 
- 
-my_sf$name <- toupper(my_sf$name)
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
  
 my_sf_merged <- my_sf %>%
   left_join(data, by = c("name" = "state_name")) %>%
@@ -420,6 +481,8 @@ leaflet(data = my_sf_merged) %>%
   )
  
 ```
+
+## Model
 
 ```{r echo = TRUE, warning = FALSE}
 # Mutating and creating the workflow, model and recipes
@@ -489,7 +552,10 @@ ggplot(data_test_augmented, aes(x = .pred, y = .resid)) +
 ```
 
 
+
 ## References
 
-List any references here. You should, at a minimum, list your data source.
+Redmond, M. (2009). Communities and Crime Unnormalized [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5PC8X.
+
+
 
