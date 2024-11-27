@@ -1,7 +1,7 @@
 ---
 title: "Building A Model to Determine the Relationship Between Socio-Economic Factors and Crime"
-subtitle: "Presentation subtitle (if any)"
-author: "Crime Crunchers <br> Drew Goldstein, Manuel Cabrera, Dmitriis, Dimitriis, Shane, Samuel Prior"
+subtitle: ""
+author: "Crime Crunchers <br> Drew Goldstein, Manuel Cabrera, Dimitris Bardanis, Dimitris Agouridis, Shane Chesen, Samuel Prior"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
@@ -40,105 +40,187 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 
 ```{r load-data, include=FALSE}
 # Load your data here
+data <- read.csv("data/crime/communitiesUnnormalized.txt", header = FALSE, na.string = "?")
+  
+names_lines <- read_lines("data/crime/names.names")
+  
+  
+attribute_lines <- grep("^@attribute", names_lines, value = TRUE)
+attribute_lines <- gsub("@attribute ", "", attribute_lines)
+attribute_lines <- gsub(" .*", "", attribute_lines)
+
+colnames(data) <- c(attribute_lines)
+
+column_names <- colnames(data)
 
 ```
-
-```{r include=FALSE}
-
-#Background image
-style_xaringan(
-  title_slide_background_image = "img/confetti.jpg"
-)
-```
-
-class: center, middle
-
-## The Goal Is to Detmerine the Relationship Between Socio-Economic Factors and Crime per Population
-
----
-
-class: inverse, center, middle
-
-# Introduction
-
-
----
 
 # What is The Data?
 
- - What kind of data does it contain? The dataset contains string, numerical and categorical data.
- - What are the attributes? Multiple for location and then the socioeconomic factors as well as the violent crimes per population 
- - What kind of questions can this data potentially answer? This data could answer a quesiton regarding the role that socioeconomic factors play in determining violent crime density
- - the data is normalised between 0 and 1 
+- The data was obtained from US government agencies who retrieved the data through internal surveys. The data contains information on location, socio-economic factors, crime data as well as police department data. 
+
+- The data is designed around the goal variable, ViolentCrimesPerPopulation. This is the response variable which will be predicted. There are 122 predictive variables all of which are decimal numerical values between 0 and 1. As well as non predictive string and numerical variables describing location and county/community code. 
+
+- The data was taken from a data set with numerical values and normalised between 0 and 1. The dataset was available online, the dataset was imported and a new dataframe was created.
 
 ---
+
+# What kind of question can this answer?
+
+Questions regarding crime in the community with regards to:
+- Economic Factors 
+- Education
+- Social Factors
+- Police 
+
+---
+
+class: center, middle
+
+## The Goal Is to Determine a Relationship Between Socio-Economic Factors and Crime per Population
+
+---
+
 
 
 # What is the Question?
 
-Which factors influence the crime level of a city in the United States?
+Which factors influence the crime level of a community in the United States?
 
 Using these factors can a suitable model be defined?
 
+--
+
+How to answer this?
+--
+
+- Through EDA, identify suitable variables with a high correlation to the goal variable.
+- Create a model with these variables 
+- Evaluate the validity of the model
 
 ---
 
 # Background Info
 
-Socioeconomic Indicators:
+---
 
-Median Income (medIncome): Lower income areas tend to have higher violent crime rates.
-Poverty Rate (PctPopUnderPov): A higher percentage of people under the poverty level correlates with higher violent crime rates.
-Unemployment Rate (PctUnemployed): High unemployment rates can drive crime, especially violent crime.
-Education Level (PctNotHSGrad, PctBSorMore): Areas with lower education levels often have higher crime rates.
+# Variables of Interest
 
-These indicators are all similar so it would only be useful to investigate say one or two of these as they are highly correlated with each other. We shall try and determine which has the greatest correlation by way of line of best fit.
+.pull-left[
+Economic:
 
-Percentage of Youth (agePct12t21, agePct12t29): Younger populations, particularly in the 12-29 age range, often correlate with higher violent crime rates.
+- medIncome 
+- IncomePerCap
+- PctPopUnderPov 
+- PctUnemployed 
+- PctNotHSGrad
+- pctPoverty
+- medFamIncome
+ 
+Police:
 
-Percentage of Population Living in Urban Areas (pctUrban): Higher urbanization is typically associated with higher crime rates.
+- LemasSwornFTPerPop
+]
+.pull-right[
+Demographic:
 
+- agePct12t21
+- agePct12t29
+- pctUrban
+- pctworkmom
+- pct2par
+- 
+- 
 
-Police Officers (LemasSwornFTPerPop): The ratio of police officers per 100,000 people can impact crime rates. However, more police could also reflect higher crime levels that demand more resources, so this variable should be interpreted carefully.
+Goal Variable:
+
+- violentperPop
+]
+
+--
+
+The indicators in the categories are all similar so it would only be useful to investigate one of these as they are highly correlated with each other. We shall try and determine which has the greatest correlation by way of line of best fit
 
 ---
 
-# Methods
+# Importing Data
 
-
-
----
-
-# Summarise Cleaning
-
-The dataset was imported from ... as a .txt file however had a format of a .data file? The column names were stored in a seperate .names file which had information pertaining to the dataset and variables as well as sources and methods. The columns were read from the text file and stored in a df with the column names being read in and stored as the column names. At this point the state was stored as a numerical value and so we got the relevant state codes from ... and replaced the numbers with codes.
+The dataset was imported from as a .txt file however had a format of a .data file. The column names were stored in a seperate .names file which had information pertaining to the dataset and variables as well as sources and methods. The columns were read from the text file and stored in a df with the column names being read in and stored as the column names. At this point the state was stored as a numerical value and so we got the relevant state codes from .. and replaced the numbers with codes.
 The unnormalized version of the data was found online and then joined to our dataset. 
 
----
+Cleaning
 
-# Pre-Processing
-
-In order to find a suitable economic variable to model the violence in a given city, we'll start by taking a look at the income per capita.
-
-Let's equally split the variable perCapInc into four categories representing the level of wealth of each city, and let's visualize the relation of these categories with the ViolentPerPop:
+- Remove NAs 
+- Replacing normalised data
+- Dropping unnecesary variables
 
 ---
+
+# Pre Processing
+
+- The perCapInc variable is split into four categories representing the level of wealth of each city.
+- Family statistics were calculated and summarised. 
+- State initials replaced state codes 
+- Geospatial data added for states
+
+---
+
+# Variables used
+
+- perCapInc
+- pctPoverty
+- pct2Par
+- pctWorkMom-6
+- violentPerPop
+- medFamIncome
+
+--- 
 
 # Description of Techniques Used
 
 Scatter plots were used to determine a relationship between variables and violent crimes per population, this was important as it allowed us to determine which variables were correlated and should be used in our model. 
 
-We spot a clear relation between the economic level of a city and the level of violence, that is, as the level of wealth increases, the level of violence decreases.
+histograms 
 
-However, recall that the income per capita is mathematically defined as follows:
-$$
-perCapInc = \frac{\text{Total Income}}{Population}
-$$
-That means, if the total income is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population. This encourages us to include some other variable that better measures this distribution.
+maps
+
+box plots
+
+residuals plots
+
+roc curves
+
+---
+
+# Model
+
+The model used was a linear model 
 
 ---
 
 # Results
+
+---
+
+# Exploratory Data Analysis
+
+violent crimes per wealth category
+
+crimes vs percentages of people under poverty 
+
+gradient coefficients
+
+boxplot of violent crimes 
+
+---
+
+![My Plot](img/scatter.png)
+
+residuals plot 
+
+roc curve
+
+maps
 
 ---
 
@@ -151,139 +233,6 @@ That means, if the total income is **large enough**, the perCapInc variable will
 ---
 
 # With More Time?
-
----
-
-class: inverse, middle, center
-
-# Using xaringan
-
----
-
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns $^*$
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
-]
-
----
-
-# Code
-
-```{r boring-regression}
-# a boring regression
-model <- lm(dist ~ speed, data = cars)
-tidy(model)
-glance(model)
-```
-
----
-
-# Plots
-
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
-
-```{r plot-iris, echo = FALSE}
-# Code hidden with echo = FALSE
-# Uses modified iris dataset from previous chunk
-# Play around with height and width until you're happy with the look
-ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() + 
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
-```
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot() +
-  theme_minimal()
-```
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r iris-table, echo = FALSE}
-kable(head(iris), format = "html")
-```
-
----
-
-# Images
-
-```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("img/edinburgh-castle.jpg")
-```
-
-Or you can also include a full page image. See next slide.
-
----
-
-
-class: inverse, center, middle
-background-image: url(img/edinburgh-castle.jpg)
-background-size: contain
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
 
 ---
 
