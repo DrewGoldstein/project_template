@@ -234,46 +234,16 @@ class: center, middle
 - `Median Family Income Levels` is divided into 5 (0 to 0.1, 0.1 to 0.5, 0.5 to 0.9, 0.9 to 0.99 and 0.99 to 1) instead of terciles, to reflect the skewed nature of income levels. 
 ]
 .pull-right[
+<style>
+  .code-block {
+    position: relative;
+    top: -100px; 
+  }
+</style>
+
+<div class="code-block">
 ```{r echo=TRUE, eval=FALSE}
 mutate(
-    Median_Family_Income_Levels = cut(
-      Median_Family_Income,
-      breaks = quantile(Median_Family_Income, probs = c(0, 0.1, 0.5, 0.9, 0.99, 1), na.rm = TRUE),
-      labels = c("Very Low", "Low", "Medium", "High", "Very High"),
-      include.lowest = TRUE
-    ),
-    Number_of_Two_Parent_Families = cut(
-      Families_with_two_parents,
-      breaks = quantile(Families_with_two_parents, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-      labels = c("Low", "Medium", "High"),
-      include.lowest = TRUE
-    ),
-    Number_of_Working_Moms = cut(
-      Working_moms,
-      breaks = quantile(Working_moms, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
-      labels = c("Low", "Medium", "High"),
-      include.lowest = TRUE
-    )
-  )
-```
-
-]
-
----
-
-## Box Plot: Familial Situation vs Violent Crimes per 100K
-
-.pull-left-wide[
-```{r  family_box, echo=FALSE, out.width="60%"}
-family_statistics <- data %>%
-  select(medFamIncome, pct2Par, `pctWorkMom-6`, violentPerPop) %>%
-  drop_na() %>% # Dropping all NAs
-  rename(
-    Median_Family_Income = medFamIncome,
-    Families_with_two_parents = pct2Par,
-    Working_moms = `pctWorkMom-6`
-  ) %>% # Renaming variables
-  mutate(
     Median_Income = cut(
       Median_Family_Income,
       breaks = quantile(Median_Family_Income, probs = c(0, 0.1, 0.5, 0.9, 0.99, 1), na.rm = TRUE),
@@ -293,42 +263,131 @@ family_statistics <- data %>%
       include.lowest = TRUE
       )
 )
+```
 
+]
+
+---
+
+## Box Plot: Familial Situation vs Violent Crimes per 100K
+
+```{r  family_mutation2, echo=FALSE}
+family_statistics <- data %>%
+  select(medFamIncome, pct2Par, `pctWorkMom-6`, violentPerPop) %>%
+  drop_na() %>% # Dropping all NAs
+  rename(
+    Median_Family_Income = medFamIncome,
+    Families_with_two_parents = pct2Par,
+    Working_moms = `pctWorkMom-6`
+  ) %>% # Renaming variables
+  mutate(
+    Median_Income = cut(
+      Median_Family_Income,
+      breaks = quantile(Median_Family_Income, probs = c(0, 0.1, 0.5, 0.9, 0.99, 1), na.rm = TRUE),
+      labels = c( "Very Low", "Low", "Medium", "High", "Very High"),
+      include.lowest = TRUE),
+    Two_Parent_Families = cut(
+      Families_with_two_parents,
+      breaks = quantile(Families_with_two_parents, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+      labels = c("Low", "Medium", "High"),
+      include.lowest = TRUE),
+    Working_Moms = cut(
+      Working_moms,
+      breaks = quantile(Working_moms, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+      labels = c("Low", "Medium", "High"),
+      include.lowest = TRUE)
+)
 family_statistics_long <- family_statistics %>%
   pivot_longer(
     cols = c(Median_Income, Two_Parent_Families, Working_Moms),
     names_to = "Category",
     values_to = "Level"
   ) 
-
 family_statistics_long <- family_statistics_long %>%
   mutate(
     Level = factor(Level, levels = c("Very Low", "Low", "Medium", "High", "Very High"))
   )
-
 family_statistics_long <- family_statistics_long %>%
   mutate(
-    Category = str_replace_all(Category, "_", " ")
-)
+    Category = str_replace_all(Category, "_", " "))
+```
+.panelset[
 
-ggplot(family_statistics_long, 
+.panel[.panel-name[Income]
+
+.pull-left[
+```{r  family_boxplot1, echo=FALSE, out.width="1000"}
+ggplot(family_statistics_long %>% filter(Category == "Median Income"), 
        aes(x = Level, 
            y = violentPerPop, 
            fill = Level)) +
   geom_boxplot() +
-  facet_wrap(~ Category, scales = "free", ncol = 3) +
   labs(
-    x = "Socioeconomic Levels",
-    y = "Number of violent Crimes Per Population"
+    title = "Crimes per Population vs Median Family Income",
+    x = "Median Income Levels",
+    y = "Number of Violent Crimes per Population"
   ) +
   theme_minimal() +
   theme(
-    plot.subtitle = element_text(size = 10),
-    strip.text = element_text(size = 8, face = "bold"),
-    axis.text.x = element_text(size = 7, angle = 45, hjust = 1)
+    plot.title = element_text(size = 12, face = "bold"),
+    axis.text.x = element_text(size = 9, angle = 45, hjust = 1),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.title.x = element_text(size = 10),
+    axis.title.y = element_text(size = 10)
   )
 ```
-]
+]]
+
+.panel[.panel-name[Parents]
+
+.pull-left[
+```{r  family_boxplot2, echo=FALSE, out.width="100%"}
+ggplot(family_statistics_long %>% filter(Category == "Two Parent Families"), 
+       aes(x = Level, 
+           y = violentPerPop, 
+           fill = Level)) +
+  geom_boxplot() +
+  labs(
+    title = "Crimes per Population vs Number of Two Parent Families",
+    x = "Number of Two Parent Families",
+    y = "Number of Violent Crimes per Population"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    axis.text.x = element_text(size = 9, angle = 45, hjust = 1),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.title.x = element_text(size = 10),
+    axis.title.y = element_text(size = 10)
+  )
+```
+] ]
+
+.panel[.panel-name[Moms]
+
+.pull-left[
+```{r  family_boxplot3, echo=FALSE, out.width="100%"}
+ggplot(family_statistics_long %>% filter(Category == "Working Moms"), 
+       aes(x = Level, 
+           y = violentPerPop, 
+           fill = Level)) +
+  geom_boxplot() +
+  labs(
+    title = "Crimes per Population vs Number of Working Moms",
+    x = "Number of Working Moms",
+    y = "Number of Violent Crimes per Population"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    axis.text.x = element_text(size = 9, angle = 45, hjust = 1),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.title.x = element_text(size = 10),
+    axis.title.y = element_text(size = 10)
+  )
+```
+] ] ]
+
 .pull-right[
 - analysis
 ]
