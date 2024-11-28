@@ -75,7 +75,7 @@ data <- data %>%
   left_join(state_names, by = "State")
 ```
 
-# What is The Data?
+### What is The Data?
 
 - The data was obtained from US government agencies who retrieved the data through internal surveys. The data contains information on location, socio-economic factors, crime data as well as police department data. 
 
@@ -83,9 +83,7 @@ data <- data %>%
 
 - The data was taken from a data set with numerical values and normalised between 0 and 1. The dataset was available online, the dataset was imported and a new dataframe was created.
 
----
-
-# What kind of question can this answer?
+### What kind of question can this answer?
 
 Questions regarding crime in the community with regards to:
 - Economic Factors 
@@ -95,67 +93,11 @@ Questions regarding crime in the community with regards to:
 
 ---
 
-class: center, middle
-
-## The Goal Is to Determine a Relationship Between Socio-Economic Factors and Crime per Population
-
----
-
-
-
-# What is the Question?
+### What is the Question?
 
 Which factors influence the crime level of a community in the United States?
 
 Using these factors can a suitable model be defined?
-
---
-
-How to answer this?
---
-
-- Through EDA, identify suitable variables with a high correlation to the goal variable.
-- Create a model with these variables 
-- Evaluate the validity of the model
-
----
-
-# Background Info
-
----
-
-# Variables of Interest
-
-.pull-left[
-Economic:
-
-- medIncome 
-- IncomePerCap
-- PctPopUnderPov 
-- PctUnemployed 
-- PctNotHSGrad
-- pctPoverty
-- medFamIncome
- 
-Police:
-
-- LemasSwornFTPerPop
-]
-.pull-right[
-Demographic:
-
-- agePct12t21
-- agePct12t29
-- pctUrban
-- pctworkmom
-- pct2par
-- 
-- 
-
-Goal Variable:
-
-- violentperPop
-]
 
 --
 
@@ -168,13 +110,11 @@ The indicators in the categories are all similar so it would only be useful to i
 The dataset was imported from as a .txt file however had a format of a .data file. The column names were stored in a seperate .names file which had information pertaining to the dataset and variables as well as sources and methods. The columns were read from the text file and stored in a df with the column names being read in and stored as the column names. At this point the state was stored as a numerical value and so we got the relevant state codes from .. and replaced the numbers with codes.
 The unnormalized version of the data was found online and then joined to our dataset. 
 
-Cleaning
+# Cleaning
 
 - Remove NAs 
 - Replacing normalised data
 - Dropping unnecesary variables
-
----
 
 # Pre Processing
 
@@ -185,14 +125,27 @@ Cleaning
 
 ---
 
-# Variables used
+### Variables of Interest
 
-- perCapInc
-- pctPoverty
-- pct2Par
-- pctWorkMom-6
-- violentPerPop
-- medFamIncome
+Economic:
+
+- pctPoverty: percentage of people under poverty
+
+- perCapInc: income per capita
+
+Social
+
+- medFamIncome: median income of families
+
+- pct2Par: percentage of families with two parents
+
+- pctWorkMom-6: percentage of moms of kids 6 and under in labor force
+
+Demographic
+
+- popDensity: population density
+
+- policePerPop: police officers per 100K population
 
 ---
 
