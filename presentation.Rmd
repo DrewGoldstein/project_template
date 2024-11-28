@@ -110,11 +110,15 @@ The indicators in the categories are all similar so it would only be useful to i
 The dataset was imported from as a .txt file however had a format of a .data file. The column names were stored in a seperate .names file which had information pertaining to the dataset and variables as well as sources and methods. The columns were read from the text file and stored in a df with the column names being read in and stored as the column names. At this point the state was stored as a numerical value and so we got the relevant state codes from .. and replaced the numbers with codes.
 The unnormalized version of the data was found online and then joined to our dataset. 
 
+---
+
 # Cleaning
 
 - Remove NAs 
 - Replacing normalised data
 - Dropping unnecesary variables
+
+---
 
 # Pre Processing
 
@@ -492,4 +496,3 @@ maps
 
 # Conclusion
 
----
