@@ -211,7 +211,19 @@ residuals plots
 roc curves
 
 ---
+# Exploratory Data Analysis
+
+violent crimes per wealth category
+
+crimes vs percentages of people under poverty 
+
+gradient coefficients
+
+boxplot of violent crimes
+
+---
 class: center, middle
+
 # Section 2: Crimes and Family
 
 ---
@@ -229,9 +241,9 @@ class: center, middle
 .pull-left[
 - Renaming variables for readability
 
-- Dividing `Median Family Income` into five categories (Very Low, Low, Medium, High, Very High) and `Number_of_Working_Moms`, `Number_of_Two_Parent_Families` into three categories (Low, Medium, High)
+- Dividing **`Median Family Income`** into five categories (Very Low, Low, Medium, High, Very High) and **`Number_of_Working_Moms`**, **`Number_of_Two_Parent_Families`** into three categories (Low, Medium, High)
 
-- `Median Family Income Levels` is divided into 5 (0 to 0.1, 0.1 to 0.5, 0.5 to 0.9, 0.9 to 0.99 and 0.99 to 1) instead of terciles, to reflect the skewed nature of income levels. 
+- **`Median Family Income`** is divided into 5 (0 to 0.1, 0.1 to 0.5, 0.5 to 0.9, 0.9 to 0.99 and 0.99 to 1) instead of terciles, to reflect the skewed nature of income levels. 
 ]
 .pull-right[
 <style>
@@ -242,7 +254,7 @@ class: center, middle
 </style>
 
 <div class="code-block">
-```{r echo=TRUE, eval=FALSE}
+```{r code-block, echo=TRUE, eval=FALSE}
 mutate(
     Median_Income = cut(
       Median_Family_Income,
@@ -389,8 +401,32 @@ ggplot(family_statistics_long %>% filter(Category == "Working Moms"),
 ] ] ]
 
 .pull-right[
-- analysis
+- Analysis
 ]
+
+---
+## Familial Situation vs Violent Crimes Per 100K Box Plot
+```{r  family_boxplot_full, echo=FALSE, out.width="80%", out.extra='style="display: block; margin: 0 auto;"'}
+ggplot(family_statistics_long, 
+       aes(x = Level, 
+           y = violentPerPop, 
+           fill = Level)) +
+  geom_boxplot() +
+  facet_wrap(~ Category, scales = "free", ncol = 3) +
+  labs(
+    x = "Socioeconomic Levels",
+    y = "Number of violent Crimes Per Population"
+  ) +
+  theme_minimal() +
+  theme_bw() +
+  theme(
+    plot.subtitle = element_text(size = 10),
+    strip.text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 45, hjust = 1)
+  )
+```
+
+
 ---
 
 ## Scatter Plot: Familial Situation vs Violent Crimes per 100K
@@ -463,34 +499,23 @@ ggplot(family_statistics_long, aes(
 ] ] ]
 
 .pull-right[
-- analysis
+- Analysis
 ]
 
 ---
 # Key Findings From Crimes and Family
--
+- What did we find out?
+- What are the implications of the results?
 
 ---
 
 # Model
 
-The model used was a linear model 
+- The model used was a linear model 
 
 ---
 
 # Results
-
----
-
-# Exploratory Data Analysis
-
-violent crimes per wealth category
-
-crimes vs percentages of people under poverty 
-
-gradient coefficients
-
-boxplot of violent crimes 
 
 ---
 
@@ -512,17 +537,6 @@ maps
 
 ---
 
-# With More Time?
+# Conclusion
 
 ---
-
-# Feeling adventurous?
-
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-- You are welcome to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
