@@ -305,7 +305,7 @@ class: inverse, center, middle
 
 - Dividing `Median Family Income` into five categories (Very Low, Low, Medium, High, Very High) and `Number_of_Working_Moms`, `Number_of_Two_Parent_Families` into three categories (Low, Medium, High)
 
-- `Median Family Income` is divided into 5 (0 to 0.1, 0.1 to 0.5, 0.5 to 0.9, 0.9 to 0.99 and 0.99 to 1) instead of terciles, to reflect the skewed nature of income levels. 
+- `Median Family Income Levels` is divided into 5 (0 to 0.1, 0.1 to 0.5, 0.5 to 0.9, 0.9 to 0.99 and 0.99 to 1) instead of terciles, to reflect the skewed nature of income levels. 
 ]
 .pull-right[
 <style>
@@ -563,19 +563,6 @@ ggplot(family_statistics_long, aes(
 
 ]
 ] ]
-
-
----
-
-# Key Findings From Crimes and Family
-
-<div style="padding: 20px; background-color: #f7dc6f; border-radius: 5px; font-size: 1.5em; color: #333;">
-
-“From investigating these three variables and their relationship with violent crime rates we find that the percentage of working mums has no correlation with crime rates and the percentage of two parent families has the strongest.”
-
-</div>
-
-So we conclude that pct2Par is the best explanatory variable of the three to predict violent crime in a region and thus include that in our model.
 
 ---
 
