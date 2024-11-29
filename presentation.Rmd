@@ -1,5 +1,5 @@
 ---
-title: "Building A Model to Determine the Relationship Between Socio-Economic Factors and Crime"
+title: "Crimes and Communities in the US"
 subtitle: ""
 author: "Crime Crunchers <br> Drew Goldstein, Manuel Cabrera, Dimitris Bardanis, Dimitris Agouridis, Shane Chesen, Samuel Prior"
 institute: "University of Edinburgh"
@@ -42,144 +42,247 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```
 
 ```{r load-data, include=FALSE}
-# Load your data here
+#Loading data
+
 data <- read.csv("data/crime/communitiesUnnormalized.txt", header = FALSE, na.string = "?")
   
-names_lines <- read_lines("data/crime/names.names")
-  
-  
-attribute_lines <- grep("^@attribute", names_lines, value = TRUE)
-attribute_lines <- gsub("@attribute ", "", attribute_lines)
-attribute_lines <- gsub(" .*", "", attribute_lines)
+col_names <- read_lines("data/crime/names.names")
+col_names <- grep("@attribute", col_names, value = TRUE)
+col_names <- gsub("@attribute ", "", col_names)
+col_names <- gsub(" .*", "", col_names)
 
-colnames(data) <- c(attribute_lines)
-
-column_names <- colnames(data)
+colnames(data) <- c(col_names)
 
 state_names <- data.frame(
-
   State = c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"),
 
-  state_name = c("ALABAMA", "ALASKA", "ARIZONA", "ARKANSAS", "CALIFORNIA", "COLORADO", "CONNECTICUT", "DELAWARE", "DISTRICT OF COLUMBIA", "FLORIDA", "GEORGIA", "HAWAII", "IDAHO", "ILLINOIS", "INDIANA", "IOWA", "KANSAS", "KENTUCKY", "LOUISIANA", "MAINE", "MARYLAND", "MASSACHUSETTS", "MICHIGAN", "MINNESOTA", "MISSISSIPPI", "MISSOURI", "MONTANA", "NEBRASKA", "NEVADA", "NEW HAMPSHIRE", "NEW JERSEY", "NEW MEXICO", "NEW YORK", "NORTH CAROLINA", "NORTH DAKOTA", "OHIO", "OKLAHOMA", "OREGON", "PENNSYLVANIA", "RHODE ISLAND", "SOUTH CAROLINA", "SOUTH DAKOTA", "TENNESSEE", "TEXAS", "UTAH", "VERMONT", "VIRGINIA", "WASHINGTON", "WEST VIRGINIA", "WISCONSIN", "WYOMING"),
-
-  latitude = c(32.806671, 61.370716, 33.729759, 34.969704, 36.116203, 39.059811, 41.597782, 39.318523, 38.897438, 27.766279, 33.040619, 21.094318, 44.240459, 40.349457, 39.849426, 42.011539, 38.5266, 37.66814, 31.169546, 44.693947, 39.063946, 42.230171, 43.326618, 45.694454, 32.741646, 38.456085, 46.921925, 41.12537, 38.313515, 43.452492, 40.298904, 34.840515, 42.165726, 35.630066, 47.528912, 40.388783, 35.565342, 44.572021, 40.590752, 41.680893, 33.856892, 44.299782, 35.747845, 31.054487, 39.32098, 44.045876, 37.769337, 47.400902, 38.491226, 44.268543, 42.755966),
-
-  longitude = c(-86.79113, -152.404419, -111.431221, -92.373123, -119.681564, -105.311104, -72.755371, -75.507141, -77.026817, -81.686783, -83.643074, -157.498337, -114.478828, -88.986137, -86.258278, -93.210526, -96.726486, -84.670067, -91.867805, -69.381927, -76.802101, -71.530106, -84.536095, -93.900192, -89.678696, -92.288368, -110.454353, -98.268082, -117.055374, -71.563896, -74.521011, -106.248482, -74.948051, -79.806419, -99.784012, -82.764915, -96.928917, -122.070938, -77.209755, -71.51178, -80.945007, -99.438828, -86.692345, -97.563461, -111.950684, -72.710686, -78.169968, -121.490494, -80.954456, -89.616508, -107.30249)
-
+  state_name = c("ALABAMA", "ALASKA", "ARIZONA", "ARKANSAS", "CALIFORNIA", "COLORADO", "CONNECTICUT", "DELAWARE", "DISTRICT OF COLUMBIA", "FLORIDA", "GEORGIA", "HAWAII", "IDAHO", "ILLINOIS", "INDIANA", "IOWA", "KANSAS", "KENTUCKY", "LOUISIANA", "MAINE", "MARYLAND", "MASSACHUSETTS", "MICHIGAN", "MINNESOTA", "MISSISSIPPI", "MISSOURI", "MONTANA", "NEBRASKA", "NEVADA", "NEW HAMPSHIRE", "NEW JERSEY", "NEW MEXICO", "NEW YORK", "NORTH CAROLINA", "NORTH DAKOTA", "OHIO", "OKLAHOMA", "OREGON", "PENNSYLVANIA", "RHODE ISLAND", "SOUTH CAROLINA", "SOUTH DAKOTA", "TENNESSEE", "TEXAS", "UTAH", "VERMONT", "VIRGINIA", "WASHINGTON", "WEST VIRGINIA", "WISCONSIN", "WYOMING")
 )
 
 # Join State information with data
 
 data <- data %>%
-
   left_join(state_names, by = "State")
+
+# Getting rid of NA's in the variables of our interest
+
+data <- data %>%
+  filter(!is.na(violentPerPop) & violentPerPop != 0)
 ```
 
-### What is The Data?
+class: center, middle
 
-- The data was obtained from US government agencies who retrieved the data through internal surveys. The data contains information on location, socio-economic factors, crime data as well as police department data. 
-
-- The data is designed around the goal variable, ViolentCrimesPerPopulation. This is the response variable which will be predicted. There are 122 predictive variables all of which are decimal numerical values between 0 and 1. As well as non predictive string and numerical variables describing location and county/community code. 
-
-- The data was taken from a data set with numerical values and normalised between 0 and 1. The dataset was available online, the dataset was imported and a new dataframe was created.
-
-### What kind of question can this answer?
-
-Questions regarding crime in the community with regards to:
-- Economic Factors 
-- Education
-- Social Factors
-- Police 
+## What economic, social, and demographic factors most significantly influence the crime rates in cities across the United States?
 
 ---
 
-### What is the Question?
+# What is The Data?
 
-Which factors influence the crime level of a community in the United States?
+.panelset[
 
-Using these factors can a suitable model be defined?
+.panel[.panel-name[Description]
+
+The dataset we'll be using contains:
+
+- **Socio-economic data** from the '90 Census
+- **Law enforcement data** from the 1990 Law Enforcement Management and Admin Stats survey
+- **Crime data** from the 1995 FBI UCR
+
+*Source*
+
+Redmond, M. (2009). Communities and Crime Unnormalized [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5PC8X.
+
+]
+
+.panel[.panel-name[Preview]
+
+```{r showing_data, echo = FALSE}
+data %>%
+  select(communityname, pctPoverty, perCapInc, pct2Par, violentPerPop) %>%
+  head(18)
+
+```
+
+]]
+
+---
+
+## Variables we'll be working with
+
+### **Economic:**
+- `pctPoverty`: percentage of people under poverty
+- `perCapInc`: income per capita
+
+### **Social:**
+- `medFamIncome`: median income of families
+- `pct2Par`: percentage of families with two parents
+- `pctWorkMom-6`: percentage of moms of kids 6 and under in labor force
+
+### **Demographic:**
+- `popDensity`: population density
+- `policePerPop`: police officers per 100K population
+
+---
+
+# Data cleaning and Wrangling
+
+- Assigned the column's names in the file `names.names` to the dataset `communitiesUnnormalized.txt`, and called this dataset `data`.
 
 --
 
-The indicators in the categories are all similar so it would only be useful to investigate one of these as they are highly correlated with each other. We shall try and determine which has the greatest correlation by way of line of best fit
+- Created a data frame `state_names` containing: a column `State` with the abbreviated name of states and a column `state_name` containing a string with the complete name.
+
+--
+
+- Left join `data` with `state_names`, by "State".
+
+--
+
+- Filtered all rows in which `violentPerPop` = NA.
 
 ---
 
-# Importing Data
+class: inverse, center, middle
 
-The dataset was imported from as a .txt file however had a format of a .data file. The column names were stored in a seperate .names file which had information pertaining to the dataset and variables as well as sources and methods. The columns were read from the text file and stored in a df with the column names being read in and stored as the column names. At this point the state was stored as a numerical value and so we got the relevant state codes from .. and replaced the numbers with codes.
-The unnormalized version of the data was found online and then joined to our dataset. 
-
----
-
-# Cleaning
-
-- Remove NAs 
-- Replacing normalised data
-- Dropping unnecesary variables
+# Section 1: Crimes and Economics
 
 ---
 
-# Pre Processing
+# Per Capita Income
 
-- The perCapInc variable is split into four categories representing the level of wealth of each city.
-- Family statistics were calculated and summarised. 
-- State initials replaced state codes 
-- Geospatial data added for states
+.panelset[
+
+.panel[.panel-name[Plots]
+
+.pull-left[
+```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
+data <- data %>%
+  mutate(
+    wealth_group = factor(
+      cut(
+        perCapInc,
+        breaks = quantile(perCapInc, probs = seq(0, 1, 0.25), na.rm = TRUE),
+        include.lowest = TRUE,
+        labels = c("First Wealth Group", "Second Wealth Group", "Third Wealth Group", "Fourth Wealth Group")
+      ),
+      levels = c("First Wealth Group", "Second Wealth Group", "Third Wealth Group", "Fourth Wealth Group")
+    )
+  )
+
+ggplot(data, aes(x = wealth_group, y = violentPerPop, fill = wealth_group)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Violent Crimes per Each Wealth Group",
+    x = "Wealth Group",
+    y = "Violent crimes per 100K",
+    fill = "Wealth Group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+
+```
+]
+.pull-right[
+
+- In order to find a suitable variable to predict crimes, let's look at the variable `perCapInc`.
+
+- We'll create a categorical variable called wealth_group to divide the perCapInc variable into quartiles.
+
+]
+
+]
+
+.panel[.panel-name[Code]
+
+```r
+
+data <- data %>%
+  mutate(
+    wealth_group = factor(
+      cut(
+        perCapInc,
+        breaks = quantile(perCapInc, probs = seq(0, 1, 0.25), na.rm = TRUE),
+        include.lowest = TRUE,
+        labels = c("First Wealth Group", "Second Wealth Group", "Third Wealth Group", "Fourth Wealth Group")
+      ),
+      levels = c("First Wealth Group", "Second Wealth Group", "Third Wealth Group", "Fourth Wealth Group")
+    )
+  )
+
+```
+]]
 
 ---
 
-### Variables of Interest
+# Per Capita Income
 
-Economic:
+- Before our next analysis, recall that the income per capita is mathematically defined as follows:
 
-- pctPoverty: percentage of people under poverty
+$$
+perCapInc = \frac{\text{Total Income}}{\text{Population}}
+$$
+- That is, if the total income within a given area is **large enough**, the perCapInc variable will grow independently of how equally distributed are the resources within the population.
 
-- perCapInc: income per capita
+--
 
-Social
+- This suggests that there may be  another variable that, when we take it into account, it better measures this distribution of resources.
 
-- medFamIncome: median income of families
+- In fact, something interesting happens when considering `pctPoverty`...
 
-- pct2Par: percentage of families with two parents
 
-- pctWorkMom-6: percentage of moms of kids 6 and under in labor force
-
-Demographic
-
-- popDensity: population density
-
-- policePerPop: police officers per 100K population
 
 ---
 
-# Description of Techniques Used
+# Percentage Under Poverty
 
-Scatter plots were used to determine a relationship between variables and violent crimes per population, this was important as it allowed us to determine which variables were correlated and should be used in our model. 
-
-histograms 
-
-maps
-
-box plots
-
-residuals plots
-
-roc curves
-
----
-# Exploratory Data Analysis
-
-violent crimes per wealth category
-
-crimes vs percentages of people under poverty 
-
-gradient coefficients
-
-boxplot of violent crimes
+```{r warning=FALSE, message = FALSE, echo=FALSE}
+ggplot(data, aes(x = pctPoverty, y = violentPerPop)) +
+  geom_point(alpha = 0.6, color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  facet_wrap(~ wealth_group, scales = "free") +
+  labs(
+    title = "Crimes vs Percentage of People Under Poverty",
+    x = "Percentage Under Poverty",
+    y = "Violent Crimes per 100K"
+  ) +
+  theme_minimal()
+  
+```
 
 ---
-class: center, middle
+
+# Key observations
+
+- As the wealth category increases, there's a *stronger linear relation* between the percentage of poverty of a city and the crimes per 100K.
+
+- If two cities have the same percentage of poverty, the one with more income per capita has more inequality as well. Therefore, we conclude:
+
+--
+
+<div style="padding: 20px; background-color: #f7dc6f; border-radius: 5px; font-size: 1.5em; color: #333;">
+
+"The crime level of a population is mostly influenced by the level of economic inequality, rather than the income per capita or the actual percentage of poverty"
+
+</div>
+
+---
+
+# Pearson's correlation coefficient
+
+- We can formally support our last findings in a more mathematical way, by calculating the Pearson's correlation coefficient, and observe how they increase.
+
+```{r, message = FALSE, echo = FALSE, out.width="100%"}
+data %>%
+  group_by(wealth_group) %>%
+  summarise(
+    coef = cor(pctPoverty, violentPerPop, use = "complete.obs", method = "pearson")
+  ) %>%
+  kable()
+```
+
+---
+
+class: inverse, center, middle
 
 # Section 2: Crimes and Family
 
@@ -466,23 +569,177 @@ ggplot(family_statistics_long, aes(
 
 ---
 
-# Model
+class: inverse, center, middle
 
-- The model used was a linear model 
+# Section 3: Demographic and crimes
+
+---
+
+# Linear regression model
+
+```{r, include = FALSE}
+# Mutating and creating the workflow, model and recipes
+
+data <- data %>%
+  mutate(
+    log_violence = log(violentPerPop)
+  )
+
+set.seed(1234)
+datasplit <- initial_split(data)
+data_train <- training(datasplit)
+data_test  <- testing(datasplit)
+
+data_mod <- linear_reg() %>%
+  set_engine("lm")
+
+data_rec <- recipe(log_violence ~ pctPoverty + pct2Par, data = data_train)
+data_rec2 <- recipe(violentPerPop ~ pctPoverty + pct2Par, data = data_train)
+
+data_wflow <- workflow() %>%
+  add_model(data_mod) %>%
+  add_recipe(data_rec)
+
+data_wflow2 <- workflow() %>%
+  add_model(data_mod) %>%
+  add_recipe(data_rec2)
+
+# Fitting the model with training data
+
+data_fit <- data_wflow %>%
+  fit(data = data_train)
+
+data_fit2 <- data_wflow2 %>%
+  fit(data = data_train)
+
+# Predicting the training data
+
+data_train_pred <- data_fit %>%
+  predict(data_train) %>%
+  bind_cols(data_train %>% select(log_violence,communityname))
+
+data_train_pred2 <- data_fit2 %>%
+  predict(data_train) %>%
+  bind_cols(data_train %>% select(violentPerPop,communityname))
+
+rsq(data_train_pred, truth = log_violence, estimate = .pred)
+
+data_train_augmented <- augment(data_fit, new_data = data_train)
+data_train_augmented2 <- augment(data_fit2, new_data = data_train)
+
+# Predicting the testing data
+
+data_test_pred <- data_fit %>%
+  predict(data_test) %>%
+  bind_cols(data_test %>% select(log_violence,communityname))
+
+rsq(data_test_pred, truth = log_violence, estimate = .pred)
+
+data_test_augmented <- augment(data_fit, new_data = data_test)
+
+```
+
+- In order to make the best model we decided to use the explanatory variables: `pctPoverty` and `pct2Par`.
+
+- Nevertheless, the assumption of a linear correlation between the predictor variables and the outcome variable (`violentPerPop`) didn't seem to hold.
+
+--
+
+<div style="text-align: center; padding: 20px; background-color: #2ecc71; color: #fff; font-size: 1.5em; border-radius: 10px;">
+
+💡 Therefore, we applied a logarithmic transformation!
+
+</div>
+
+```r
+data <- data %>%
+  mutate(
+    log_violence = log(violentPerPop)
+  )
+```
+
+---
+
+# Comparison of residuals plot, before and after the logarithmic transformation
+
+.pull-left[
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width=6}
+
+ggplot(data_train_augmented2, aes(x = .pred, y = .resid)) +
+  geom_point(color = "darkgreen", size = 1.5, alpha = 0.8, shape = 21, fill = "lightblue") +
+  labs(
+    title = "Residuals Plot",
+    subtitle = "Predicted training data vs residuals",
+    x = "Predicted violence per 100K",
+    y = "Residuals"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    plot.subtitle = element_text(face = "italic", color = "darkgray"),
+    panel.background = element_rect(fill = "#f5f5f5", color = NA),                      
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),               
+    panel.grid.minor = element_blank()                                                  
+  )
+
+```
+
+]
+.pull-right[
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width=6}
+
+ggplot(data_train_augmented, aes(x = .pred, y = .resid)) +
+  geom_point(color = "darkgreen", size = 1.5, alpha = 0.8, shape = 21, fill = "lightblue") +
+  labs(
+    title = "Residuals Plot",
+    subtitle = "Predicted training data vs residuals",
+    x = "Predicted log_violence",
+    y = "Residuals"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    plot.subtitle = element_text(face = "italic", color = "darkgray"),
+    panel.background = element_rect(fill = "#f5f5f5", color = NA),                      
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),               
+    panel.grid.minor = element_blank()                                                  
+  )
+
+
+```
+
+]
+
+---
+
+# Predicting the testing data
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 8}
+
+ggplot(data_test_augmented, aes(x = .pred, y = .resid)) +
+  geom_point(color = "darkgreen", size = 1.5, alpha = 0.8, shape = 21, fill = "lightblue") +
+  labs(
+    title = "Residuals Plot",
+    subtitle = "Predicted training data vs residuals",
+    x = "Predicted log_violence",
+    y = "Residuals"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    plot.subtitle = element_text(face = "italic", color = "darkgray"),
+    panel.background = element_rect(fill = "#f5f5f5", color = NA),                      
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),               
+    panel.grid.minor = element_blank()                                                  
+  )
+
+```
 
 ---
 
 # Results
-
----
-
-![My Plot](img/scatter.png)
-
-residuals plot 
-
-roc curve
-
-maps
 
 ---
 
