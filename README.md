@@ -7,6 +7,7 @@
 - Dimitrios Bardanis (s2718886), DimitrisBardanis
 - Shane Chesen (s2729306), shanechesen
 - Samuel Prior (s2643405), S-Pri0r
+- Drew Goldstein (s2632354), DrewGoldstein
 
 This is a template repository for your group project. One of your group members should clone this repository and add the other team members as collaborators. You should also add the `uoeIDS` course GitHub account as a collaborator.
 
