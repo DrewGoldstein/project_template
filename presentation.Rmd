@@ -83,7 +83,7 @@ tmp_geojson <- "data/continental-us-states.json"
 
 class: center, middle
 
-## What economic, social, and demographic factors most significantly influence the crime rates in cities across the United States?
+## What socio-economic factors most significantly influence the crime rates in cities across the United States?
 
 ---
 
@@ -124,12 +124,12 @@ data %>%
 - `pctPoverty`: percentage of people under poverty
 - `perCapInc`: income per capita
 
-### **Social:**
+### **Family:**
 - `medFamIncome`: median income of families
 - `pct2Par`: percentage of families with two parents
 - `pctWorkMom-6`: percentage of moms of kids, 6 and under, in labor force
 
-### **Demographic:**
+### **Age:**
 
 - `pct16-24`: percentage of population between 16 and 24 years old
 - `pctRetired`: percentage of retired people
@@ -442,7 +442,7 @@ ggplot(family_statistics_long %>% filter(Category == "Two Parent Families"),
 ```
 ] 
 .pull-right[
-- A clear trend can also be seen between violent crime rates and the number of two parent families, with crime rates being lower in areas with a greater proportion of two parent families (a median of ~148 compared to ~887).
+- A clear trend can also be seen between violent crime rates and the percentage of two parent families, with crime rates being lower in areas with a greater proportion of two parent families (a median of ~148 compared to ~887).
 
 ]
 ]
@@ -473,7 +473,7 @@ ggplot(family_statistics_long %>% filter(Category == "Working Moms"),
 ```
 ] 
 .pull-right[
-- However, when looking at the relationship between the number of working mums and crime rates we find that there is little to no correlation and conclude that the effect number if working mums has on crime rates is very limited and thus not a good explanatory variable to predict crime rates.
+- However, when looking at the relationship between the percentage of working mums and crime rates we find that there is little to no correlation and conclude that the effect percentage of working moms has on crime rates is very limited and thus not a good explanatory variable to predict crime rates.
 ]
 ] ]
 
@@ -505,7 +505,7 @@ ggplot(family_statistics_long, aes(
 ```
 ] 
 .pull-right[
-- To determine which of the two variables, income and number of two parent families, had the strongest correlation with crime we plotted a graph and calculated the PMCC. Income produces an r-value of -0.412 whereas number of two parent families produces a value of -0.699.
+- To determine which of the two variables, income and percentage of two parent families, had the strongest correlation with crime we plotted a graph and calculated the PMCC. Income produces an r-value of -0.412 whereas percentage of two parent families produces a value of -0.699.
 - Hence we decided to opt for the pct2Par variable over the medFamIncome in our model.
 
 ]]
@@ -581,7 +581,7 @@ So we conclude that pct2Par is the best explanatory variable of the three to pre
 
 class: inverse, center, middle
 
-# Section 3: Crimes and Demography
+# Section 3: Crimes and Age
 
 ---
 
@@ -903,9 +903,9 @@ $$
 
 ### **Key Findings**
 
-- **Economic:** The most significant factor influencing violent crime rates was economic inequality.
-- **Social:** The greatest factor was the percentage of two-parent households.
-- **Demographic:** No significant relationship was found in the demographic factors
+- **Economic:** the most significant factor influencing violent crime rates was economic inequality.
+- **Family:** the greatest factor was the percentage of two-parent households.
+- **Age:** no significant relationship was found in the demographic factors
 
 --
 
@@ -914,6 +914,4 @@ $$
 - Crime is a multifaceted issue which cannot be fully explained by two variables.
 - The study only focused on violent crime.
 - The data was from the 90´s.
-
----
 
