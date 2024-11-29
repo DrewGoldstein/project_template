@@ -299,16 +299,6 @@ class: inverse, center, middle
 # Section 2: Crimes and Family
 
 ---
-# Looking at three variables related to family
-.pull-left-wide[ 
-- ### **`medFamIncome`**: Median Family Income  
-- ### **`pct2Par`**: Percentage of families with two parents  
-- ### **`pctWorkMom-6`**: Percentage of families with working mothers
-]
-
-### We investigated the impact of the above on the  `violentPerPop` variable
-
----
 # Simple Mutation
 .pull-left[
 - Renaming variables for readability
@@ -438,7 +428,7 @@ ggplot(family_statistics_long %>% filter(Category == "Two Parent Families"),
   geom_boxplot() +
   labs(
     title = "Crimes per Population vs Number of Two Parent Families",
-    x = "Number of Two Parent Families",
+    x = "Percentage of Two Parent Families",
     y = "Number of Violent Crimes per Population"
   ) +
   theme_minimal() +
@@ -468,7 +458,7 @@ ggplot(family_statistics_long %>% filter(Category == "Working Moms"),
   geom_boxplot() +
   labs(
     title = "Crimes per Population vs Number of Working Moms",
-    x = "Number of Working Moms",
+    x = "Percentage of Working Moms",
     y = "Number of Violent Crimes per Population"
   ) +
   theme_minimal() +
@@ -531,7 +521,7 @@ ggplot(family_statistics_long, aes(
   geom_smooth(method = "lm", color = "black", se = FALSE) +
   labs(
     title = "Crimes per Population and Number of Families with Two Parents",
-    x = "Number of Families with Two Parents",
+    x = "Percentage of Families with Two Parents",
     y = "Violent Crimes per Population"
   ) +
   theme_bw() +
@@ -557,7 +547,7 @@ ggplot(family_statistics_long, aes(
   geom_smooth(method = "lm", color = "black", se = FALSE) +
   labs(
     title = "Crimes per Population and Number of Families With Working Moms",
-    x = "Number of Families With Working Moms",
+    x = "Percentage of Families With Working Moms",
     y = "Violent Crimes per Population"
   ) +
   theme_bw() +
@@ -579,18 +569,19 @@ ggplot(family_statistics_long, aes(
 
 # Key Findings From Crimes and Family
 
+<div style="padding: 20px; background-color: #f7dc6f; border-radius: 5px; font-size: 1.5em; color: #333;">
+
+“From investigating these three variables and their relationship with violent crime rates we find that the percentage of working mums has no correlation with crime rates and the percentage of two parent families has the strongest.”
+
+</div>
+
+So we conclude that pct2Par is the best explanatory variable of the three to predict violent crime in a region and thus include that in our model.
+
 ---
 
 class: inverse, center, middle
 
 # Section 3: Crimes and Demography
----
-
-# Looking at variables related to the demographic
-.pull-left-wide[ 
-- ### **`pct16-24`**: Percentage of the populatio ageed between 16 and 24
-- ### **`pctRetired`**: Percentage of the populatio ageed between 16 and 24
-]
 
 ---
 
@@ -671,7 +662,7 @@ ggplot(data, aes(
   x = `pct16-24`, 
   y = violentPerPop 
 )) +
-  geom_point(alpha = 0.5, color = "orange") + 
+  geom_point(alpha = 0.5, color = "green") + 
   geom_smooth(method = "lm", color = "black", se = FALSE) +
   labs(
     title = "Violent Crimes per Population vs % of population aged between 16-24",
@@ -695,7 +686,7 @@ ggplot(data, aes(
   x = pctRetire, 
   y = violentPerPop 
 )) +
-  geom_point(alpha = 0.5, color = "orange") + 
+  geom_point(alpha = 0.5, color = "purple") + 
   geom_smooth(method = "lm", color = "black", se = FALSE) +
   labs(
     title = "Violent Crimes per Population vs Percentage of Population Retired",
@@ -711,6 +702,10 @@ ggplot(data, aes(
 
 ```
 ]
+
+- **Positive Link with Youth:** The scatter plot shows a slight positive correlation between violent crime rates and the percentage of young people.
+
+- **Negative Expectation for Seniors:** We expect states with more retired individuals to have lower violent crime rates. To test this, we created a scatter plot using the percentage of retired people in each U.S. state.
 
 ---
 
@@ -906,7 +901,19 @@ $$
 
 # Conclusion:
 
+### **Key Findings**
 
+- **Economic:** The most significant factor influencing violent crime rates was economic inequality.
+- **Social:** The greatest factor was the percentage of two-parent households.
+- **Demographic:** No significant relationship was found in the demographic factors
+
+--
+
+### **Limitations**
+
+- Crime is a multifaceted issue which cannot be fully explained by two variables.
+- The study only focused on violent crime.
+- The data was from the 90´s.
 
 ---
 
