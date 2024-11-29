@@ -410,6 +410,32 @@ ggplot(family_statistics_long %>% filter(Category == "Working Moms"),
 
 .panelset[
 
+.panel[.panel-name[Income] .pull-left[
+```{r income_scatter, message=FALSE, echo=FALSE, out.width="100%"}
+ggplot(family_statistics_long, aes(
+  x = Median_Family_Income,
+  y = violentPerPop)) +
+  geom_point(alpha = 0.5, color = "red") +
+  geom_smooth(method = "lm", color = "black", se = FALSE) +
+  labs(
+    title = "Crimes per Population and Median Family Income",
+    x = "Median Family Income",
+    y = "Violent Crimes per Population"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"),
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 9)
+  )
+```
+] 
+.pull-right[
+- To determine which of the two variables, income and number of two parent families, had the strongest correlation with crime we plotted a graph and calculated the PMCC. Income produces an r-value of -0.412 whereas number of two parent families produces a value of -0.699.
+- Hence we decided to opt for the pct2Par variable over the medFamIncome in our model.
+
+]]
+
 .panel[.panel-name[Parents]
 
 .pull-left[
@@ -431,28 +457,12 @@ ggplot(family_statistics_long, aes(
     axis.title.y = element_text(size = 9)
   )
 ```
-] ]
+]
+.pull-right[
+- To determine which of the two variables, income and number of two parent families, had the strongest correlation with crime we plotted a graph and calculated the PMCC. Income produces an r-value of -0.412 whereas number of two parent families produces a value of -0.699.
+- Hence we decided to opt for the pct2Par variable over the medFamIncome in our model.
 
-.panel[.panel-name[Income] .pull-left[
-```{r income_scatter, message=FALSE, echo=FALSE, out.width="100%"}
-ggplot(family_statistics_long, aes(
-  x = Median_Family_Income,
-  y = violentPerPop)) +
-  geom_point(alpha = 0.5, color = "red") +
-  geom_smooth(method = "lm", color = "black", se = FALSE) +
-  labs(
-    title = "Crimes per Population and Median Family Income",
-    x = "Median Family Income",
-    y = "Violent Crimes per Population"
-  ) +
-  theme_bw() +
-  theme(
-    plot.title = element_text(size = 10, face = "bold"),
-    axis.title.x = element_text(size = 9),
-    axis.title.y = element_text(size = 9)
-  )
-```
-] ]
+]]
 
 .panel[.panel-name[Moms] .pull-left[
 ```{r moms_scatter, message=FALSE, echo=FALSE, out.width="100%"}
@@ -473,11 +483,13 @@ ggplot(family_statistics_long, aes(
     axis.title.y = element_text(size = 9)
   )
 ```
-] ] ]
-
+] 
 .pull-right[
-- analysis
+- The scatter plots also helped to confirm that pctWorkMom-6 would not be a useful explanatory variable, producing an r-value of just -0.021
+
 ]
+] ]
+
 
 ---
 # Key Findings From Crimes and Family
