@@ -495,6 +495,24 @@ ggplot(family_statistics_long,
 
 ## Scatter Plot: Familial Situation vs Violent Crimes per 100K
 
+```{r pearsons, message=FALSE, echo=FALSE}
+two_parents_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Families_with_two_parents, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Correlation for Median Family Income vs Violent Crimes
+median_income_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Median_Family_Income, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+
+# Correlation for Working Moms vs Violent Crimes
+working_moms_correlation <- family_statistics_long %>%
+  summarise(
+    coef = cor(Working_moms, violentPerPop, use = "complete.obs", method = "pearson")
+  )
+```
 .panelset[
 
 .panel[.panel-name[Parents]
@@ -505,6 +523,13 @@ ggplot(family_statistics_long, aes(
   x = Families_with_two_parents,
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "forestgreen") +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Families_with_two_parents, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(two_parents_correlation, 3)),
+    hjust = 1, size = 6
+  ) +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
   labs(
     title = "Crimes per Population and Number of Families with Two Parents",
@@ -513,7 +538,7 @@ ggplot(family_statistics_long, aes(
   ) +
   theme_bw() +
   theme(
-    plot.title = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 12, face = "bold"),
     axis.title.x = element_text(size = 9),
     axis.title.y = element_text(size = 9)
   )
@@ -527,6 +552,13 @@ ggplot(family_statistics_long, aes(
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "red") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Median_Family_Income, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(median_income_correlation, 3)),
+    hjust = 1, size = 6
+  ) +
   labs(
     title = "Crimes per Population and Median Family Income",
     x = "Median Family Income",
@@ -534,7 +566,7 @@ ggplot(family_statistics_long, aes(
   ) +
   theme_bw() +
   theme(
-    plot.title = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 12, face = "bold"),
     axis.title.x = element_text(size = 9),
     axis.title.y = element_text(size = 9)
   )
@@ -548,6 +580,13 @@ ggplot(family_statistics_long, aes(
   y = violentPerPop)) +
   geom_point(alpha = 0.5, color = "yellow") +
   geom_smooth(method = "lm", color = "black", se = FALSE) +
+  annotate(
+    "text",
+    x = max(family_statistics_long$Working_moms, na.rm = TRUE),
+    y = max(family_statistics_long$violentPerPop, na.rm = TRUE),
+    label = paste0("r = ", round(working_moms_correlation, 3)),
+    hjust = 1, size = 6
+  ) +
   labs(
     title = "Crimes per Population and Number of Families With Working Moms",
     x = "Number of Families With Working Moms",
@@ -555,7 +594,7 @@ ggplot(family_statistics_long, aes(
   ) +
   theme_bw() +
   theme(
-    plot.title = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 12, face = "bold"),
     axis.title.x = element_text(size = 9),
     axis.title.y = element_text(size = 9)
   )
