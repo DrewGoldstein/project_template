@@ -693,6 +693,30 @@ ggplot(data, aes(
 ]
 
 ---
+```{r echo=FALSE, out.width="100%", message = FALSE, warning = FALSE}
+
+ggplot(data, aes(
+  x = `pct16-24`, 
+  y = violentPerPop 
+)) +
+  geom_point(alpha = 0.5, color = "green") + 
+  geom_smooth(method = "lm", color = "black", se = FALSE) +
+  labs(
+    title = "Violent Crimes per Population vs Percentage of Population aged between 16 and 24",
+    x = "Percentage of Population aged between 16 and 24",
+    y = "Violent Crimes per Population"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"), 
+    axis.title.x = element_text(size = 9),  
+    axis.title.y = element_text(size = 9)  
+  )
+
+```
+
+
+---
 
 # Linear regression model
 
