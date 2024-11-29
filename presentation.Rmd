@@ -583,7 +583,7 @@ ggplot(family_statistics_long, aes(
 
 class: inverse, center, middle
 
-# Section 3: Demographic and crimes
+# Section 3: Crimes and Demography
 ---
 
 # Looking at variables related to the demographic
@@ -665,7 +665,27 @@ class: inverse, center, middle
 
 .pull-left[
 
-- Add here your analysis
+```{r echo=FALSE, out.width="100%", message = FALSE, warning = FALSE}
+
+ggplot(data, aes(
+  x = `pct16-24`, 
+  y = violentPerPop 
+)) +
+  geom_point(alpha = 0.5, color = "orange") + 
+  geom_smooth(method = "lm", color = "black", se = FALSE) +
+  labs(
+    title = "Violent Crimes per Population vs % of population aged between 16-24",
+    x = "Percentage of Population aged between 16 and 24",
+    y = "Violent Crimes per Population"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"), 
+    axis.title.x = element_text(size = 9),  
+    axis.title.y = element_text(size = 9)  
+  )
+
+```
 
 ]
 .pull-right[
@@ -691,30 +711,6 @@ ggplot(data, aes(
 
 ```
 ]
-
----
-```{r echo=FALSE, out.width="100%", message = FALSE, warning = FALSE}
-
-ggplot(data, aes(
-  x = `pct16-24`, 
-  y = violentPerPop 
-)) +
-  geom_point(alpha = 0.5, color = "green") + 
-  geom_smooth(method = "lm", color = "black", se = FALSE) +
-  labs(
-    title = "Violent Crimes per Population vs Percentage of Population aged between 16 and 24",
-    x = "Percentage of Population aged between 16 and 24",
-    y = "Violent Crimes per Population"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 10, face = "bold"), 
-    axis.title.x = element_text(size = 9),  
-    axis.title.y = element_text(size = 9)  
-  )
-
-```
-
 
 ---
 
@@ -865,7 +861,7 @@ ggplot(data_test_augmented, aes(x = .pred, y = .resid)) +
   geom_point(color = "darkgreen", size = 1.5, alpha = 0.8, shape = 21, fill = "lightblue") +
   labs(
     title = "Residuals Plot",
-    subtitle = "Predicted training data vs residuals",
+    subtitle = "Predicted testing data vs residuals",
     x = "Predicted log_violence",
     y = "Residuals"
   ) +
@@ -902,8 +898,15 @@ $$
 $$
 --
 
-- We note that, for each additional $1%$ in people under poverty, we expect the violence per 100K to be **higher** by a factor of $1.00244$
+- We note that, for each additional 1% in people under poverty, we expect the violence per 100K to be **higher** by a factor of $1.00244$
 
-- Moreover, for each additional $1%$ of families with $2$ parents, we expect the violence per 100K to be **lower**, multiplied by a factor of $0.92766$
+- Moreover, for each additional 1% of families with 2 parents, we expect the violence per 100K to be **lower**, multiplied by a factor of $0.92766$
 
+---
+
+# Conclusion:
+
+
+
+---
 
