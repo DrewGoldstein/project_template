@@ -642,7 +642,7 @@ class: inverse, center, middle
     geom_sf(aes(fill = value), color = "white", size = 0.2) +
     scale_fill_gradientn(
       colours = palette,
-      limits = c(min(my_sf_merged$value, na.rm = TRUE), 20),
+      limits = c(min(my_sf_merged$value, na.rm = TRUE), 25),
       name = "% Between 16 and 24",
       na.value = "grey50"
     ) +
