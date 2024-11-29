@@ -305,7 +305,7 @@ class: inverse, center, middle
 
 - Dividing `Median Family Income` into five categories (Very Low, Low, Medium, High, Very High) and `Number_of_Working_Moms`, `Number_of_Two_Parent_Families` into three categories (Low, Medium, High)
 
-- `Median Family Income Levels` is divided into 5 (0 to 0.1, 0.1 to 0.5, 0.5 to 0.9, 0.9 to 0.99 and 0.99 to 1) instead of terciles, to reflect the skewed nature of income levels. 
+- `Median Family Income` is divided into 5 (0 to 0.1, 0.1 to 0.5, 0.5 to 0.9, 0.9 to 0.99 and 0.99 to 1) instead of terciles, to reflect the skewed nature of income levels. 
 ]
 .pull-right[
 <style>
@@ -914,6 +914,4 @@ $$
 - Crime is a multifaceted issue which cannot be fully explained by two variables.
 - The study only focused on violent crime.
 - The data was from the 90´s.
-
----
 
